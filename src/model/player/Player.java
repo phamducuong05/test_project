@@ -1,6 +1,6 @@
 package model.player;
 
-import model.core.Card;
+import model.core.card.Card;
 
 import java.util.ArrayList;
 import java.util.List;

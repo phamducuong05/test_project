@@ -1,6 +1,6 @@
 package model.game;
 
-import model.core.Deck;
+import model.core.deck.Deck;
 import model.player.Player;
 
 import java.util.List;

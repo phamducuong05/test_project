@@ -2,7 +2,7 @@ package model.phom;
 
 import model.core.enums.Rank;
 import model.player.Player;
-import model.core.Card;
+import model.core.card.Card;
 
 import java.util.*;
 

@@ -1,24 +1,24 @@
-package model.core;
+package model.core.deck;
 
-import model.core.enums.Rank;
-import model.core.enums.Suit;
+import model.core.card.Card;
 import model.player.Player;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
-public class Deck {
-    private Stack<Card> deck;
+public abstract class Deck<T extends Card> {
+    private final Stack<T> deck;
 
     public Deck() {
         deck = new Stack<>();
+        initializeDeck();
+    }
 
-        for (Suit suit : Suit.values()) {
-            for (Rank rank : Rank.values()) {
-                deck.add(new Card(suit, rank));
-            }
-        }
+    protected abstract void initializeDeck();
+
+    public Stack<T> getDeck() {
+        return deck;
     }
 
     public boolean isEmpty(){
@@ -29,7 +29,7 @@ public class Deck {
         Collections.shuffle(deck);
     }
 
-    public Card drawCard() {
+    public T drawCard() {
         if (deck.isEmpty()) {
             return null;
         }
@@ -45,6 +45,4 @@ public class Deck {
             player.receiveCard(deck.pop());
         }
     }
-
-
 }

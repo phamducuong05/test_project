@@ -1,15 +1,16 @@
-package model.core;
+package model.core.card;
 
-import model.core.enums.Rank;
-import model.core.enums.Suit;
+import model.core.enums.*;
 
-public class Card {
+public class WestCard extends Card {
     private final Suit suit;
     private final Rank rank;
 
-    public Card(Suit suit, Rank rank) {
+    public WestCard(Suit suit, Rank rank) {
+        super();
         this.suit = suit;
         this.rank = rank;
+        this.setName(rank.name() + " of " + suit.name());
     }
 
     public Suit getSuit() {
@@ -22,6 +23,6 @@ public class Card {
 
     @Override
     public String toString() {
-        return this.rank.name() + " of " + this.suit.name();
+        return rank.name() + " of " + suit.name();
     }
 }
