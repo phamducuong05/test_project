@@ -1,21 +1,22 @@
 package model.game;
 
+import model.core.card.Card;
 import model.core.deck.Deck;
 import model.player.Player;
 
 import java.util.List;
 
-public abstract class Game {
+public abstract class Game<T extends Player> {
     protected Deck deck;
-    protected List<Player> players;
-    protected Player currentPlayer;
+    protected List<T> players;
+    protected T currentPlayer;
     protected boolean gameState; // false = started, true = ended
     protected int numberOfCards;
 
     protected Game() {
     }
 
-    protected Game(Deck deck, List<Player> players, int numberOfCards) {
+    protected Game(Deck deck, List<T> players, int numberOfCards) {
         this.deck = deck;
         this.players = players;
         this.numberOfCards = numberOfCards;
