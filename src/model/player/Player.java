@@ -5,15 +5,15 @@ import model.core.card.Card;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player<T extends Card> {
-    protected List<T> hand;
-    protected List<T> selectedCards;
-    protected String name;
+public abstract class Player<T extends Card> {
+    private List<T> hand;
+    private List<T> selectedCards;
+    private String name;
 
     public Player() {
         this.hand = new ArrayList<>(); // Khởi tạo hand
         this.selectedCards = new ArrayList<>(); // Khởi tạo selectedCards
-        this.name = "Unnamed Player";
+        this.name = "Anonymous Player";
     }
 
     public Player(String name) {
@@ -45,5 +45,21 @@ public class Player<T extends Card> {
     public List<T> playCard() {
         hand.removeAll(selectedCards);
         return new ArrayList<>(this.selectedCards);
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setHand(List<T> hand) {
+        this.hand = hand;
+    }
+
+    public void setSelectedCards(List<T> selectedCards) {
+        this.selectedCards = selectedCards;
     }
 }
