@@ -2,6 +2,7 @@ package model.core.card;
 
 import model.core.enums.Rank;
 import model.core.enums.Suit;
+import java.util.Comparator;
 
 public class WestCard extends Card {
     private final Suit suit;

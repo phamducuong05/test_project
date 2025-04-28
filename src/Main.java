@@ -1,15 +1,31 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import model.core.card.WestCard;
+import model.core.deck.WestCardDeck;
+import model.core.enums.Rank;
+import model.core.enums.Suit;
+import model.game.TienLenMienBacGameLogic;
+
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        TienLenMienBacGameLogic logic2 = new TienLenMienBacGameLogic();
+        WestCardDeck deck = new WestCardDeck();
+        WestCardDeck hi = new WestCardDeck();
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+        WestCard c1 = new WestCard(Suit.HEARTS, Rank.TWO);
+        WestCard c2 = new WestCard(Suit.DIAMONDS, Rank.THREE);
+        WestCard c3 = new WestCard(Suit.SPADES, Rank.FOUR);
+        WestCard c4 = new WestCard(Suit.CLUBS, Rank.FIVE);
+        WestCard c5 = new WestCard(Suit.HEARTS, Rank.ACE);
+
+        List<WestCard> cards = new ArrayList<>(Arrays.asList(c1, c2, c3, c4, c5));
+        cards.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
+        System.out.println(cards);
+//        System.out.println(logic2.compareCards(c2, c5));
+
     }
 }

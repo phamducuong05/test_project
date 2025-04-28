@@ -8,12 +8,18 @@ public class TienLenPlayer extends Player<WestCard> {
     private int playerRank;
     private playerState state;
 
+    public enum playerState {
+        PLAYING,
+        WAITING
+    }
+
+
     public TienLenPlayer(String name) {
         super(name);
     }
 
     public boolean isPlaying() {
-        return getState() == playerState.Playing;
+        return getState() == playerState.PLAYING;
     }
 
     public playerState getState() {
@@ -25,11 +31,6 @@ public class TienLenPlayer extends Player<WestCard> {
     }
 
     public void skipTurn() {
-        this.state = playerState.Waiting;
-    }
-
-    public enum playerState {
-        Playing,
-        Waiting
+        this.state = playerState.WAITING;
     }
 }

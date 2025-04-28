@@ -30,7 +30,11 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
 
     @Override
     public boolean isValidMove(TienLenPlayer player) {
+        List<WestCard> selectedCards = player.getSelectedCards();
+        if (selectedCards.isEmpty()) nextTurn();
+        if (selectedCards.size() == 1) {
 
+        }
         return !player.getHand().isEmpty();
     }
 
@@ -48,14 +52,6 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
         currentPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) + 1) % getPlayers().size());
     }
 
-    private int compareCards(WestCard card1, WestCard card2) {
-        int rankComparison = card1.getRank().ordinal() - card2.getRank().ordinal();
-        if (rankComparison != 0) {
-            return rankComparison;
-        }
-        return card1.getSuit().ordinal() - card2.getSuit().ordinal();
-    }
-
     public void playCards(List<WestCard> cards) {
         if (isValidCombination(cards)) {
             cardsOnTable = currentPlayer.getSelectedCards();
@@ -65,6 +61,7 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
             System.out.println("Invalid card combination!");
         }
     }
+
 
     private boolean isValidCombination(List<WestCard> selectedCards) {
         if (isPair(selectedCards)) return true;
