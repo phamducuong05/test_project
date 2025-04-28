@@ -34,8 +34,16 @@ public abstract class Player<T extends Card> {
         return new ArrayList<>(this.hand);
     }
 
+    public void setHand(List<T> hand) {
+        this.hand = hand;
+    }
+
     public List<T> getSelectedCards() {
         return new ArrayList<>(this.selectedCards);
+    }
+
+    public void setSelectedCards(List<T> selectedCards) {
+        this.selectedCards = selectedCards;
     }
 
     public void selectCard(T card) {
@@ -53,13 +61,5 @@ public abstract class Player<T extends Card> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setHand(List<T> hand) {
-        this.hand = hand;
-    }
-
-    public void setSelectedCards(List<T> selectedCards) {
-        this.selectedCards = selectedCards;
     }
 }

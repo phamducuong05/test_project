@@ -1,6 +1,7 @@
 package model.core.card;
 
-import model.core.enums.*;
+import model.core.enums.Rank;
+import model.core.enums.Suit;
 
 public class WestCard extends Card {
     private final Suit suit;

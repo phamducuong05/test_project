@@ -6,17 +6,17 @@ import model.player.Player;
 
 import java.util.List;
 
-public abstract class Game<T extends Player> {
-    protected Deck deck;
-    protected List<T> players;
-    protected T currentPlayer;
+public abstract class Game<T extends Card, P extends Player<T>> {
+    protected Deck<T, P> deck;
+    protected List<P> players;
+    protected P currentPlayer;
     protected boolean gameState; // false = started, true = ended
     protected int numberOfCards;
 
     protected Game() {
     }
 
-    protected Game(Deck deck, List<T> players, int numberOfCards) {
+    protected Game(Deck<T, P> deck, List<P> players, int numberOfCards) {
         this.deck = deck;
         this.players = players;
         this.numberOfCards = numberOfCards;
@@ -46,7 +46,7 @@ public abstract class Game<T extends Player> {
 
     public abstract void playTurn();
 
-    public Player getCurrentPlayer() {
+    public P getCurrentPlayer() {
         return currentPlayer;
     }
 
@@ -54,22 +54,23 @@ public abstract class Game<T extends Player> {
         return gameState;
     }
 
-    public abstract Player getFirstPlayer(List<Player> players);
+    public abstract P getFirstPlayer(List<P> players);
 
-    public abstract boolean isValidMove(Player player);
+    public abstract boolean isValidMove(P player);
 
-    public abstract void endGame();
+    public abstract boolean endGame();
+
     public abstract void nextTurn();
 
     public int getNumberOfCards() {
         return this.numberOfCards;
     }
 
-    public Deck getDeck() {
+    public Deck<T, P> getDeck() {
         return this.deck;
     }
 
-    public List<Player> getPlayers() {
+    public List<P> getPlayers() {
         return this.players;
     }
 }

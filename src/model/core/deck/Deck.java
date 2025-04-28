@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
-public abstract class Deck<T extends Card> {
+public abstract class Deck<T extends Card, P extends Player<T>> {
     private final Stack<T> deck;
 
     public Deck() {
@@ -21,7 +21,7 @@ public abstract class Deck<T extends Card> {
         return deck;
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return deck.isEmpty();
     }
 
@@ -36,12 +36,12 @@ public abstract class Deck<T extends Card> {
         return deck.pop();
     }
 
-    public void dealCards(List<Player> players, int handSize) {
+    public void dealCards(List<P> players, int handSize) {
         if (players.size() * handSize > deck.size()) {
             throw new IllegalArgumentException("Not enough cards in deck");
         }
 
-        for (Player player : players) {
+        for (P player : players) {
             player.receiveCard(deck.pop());
         }
     }

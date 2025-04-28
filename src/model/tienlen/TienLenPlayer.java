@@ -1,4 +1,5 @@
 package model.tienlen;
+
 import model.core.card.WestCard;
 import model.player.Player;
 
@@ -9,11 +10,6 @@ public class TienLenPlayer extends Player<WestCard> {
 
     public TienLenPlayer(String name) {
         super(name);
-    }
-
-    public enum playerState {
-        Playing,
-        Waiting
     }
 
     public boolean isPlaying() {
@@ -30,5 +26,10 @@ public class TienLenPlayer extends Player<WestCard> {
 
     public void skipTurn() {
         this.state = playerState.Waiting;
+    }
+
+    public enum playerState {
+        Playing,
+        Waiting
     }
 }

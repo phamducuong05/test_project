@@ -3,7 +3,8 @@ package model.core.card;
 public abstract class Card {
     private String name;
 
-    public Card() {}
+    public Card() {
+    }
 
     public Card(String name) {
         this.name = name;
@@ -18,5 +19,5 @@ public abstract class Card {
     }
 
     @Override
-    public  abstract String toString();
+    public abstract String toString();
 }
