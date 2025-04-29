@@ -134,6 +134,23 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
         boolean tableIsSequence = isSequence(cardsOnTable);
         boolean selectedIsSequence = isSequence(selectedCards);
 
+        cardsOnTable.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
+        selectedCards.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
+
+        //special counter only for cards with rank 2
+        if (cardsOnTable.size() == 1 && cardsOnTable.getFirst().getRank() == Rank.TWO) {
+            if (selectedCards.size() == 1 && selectedCards.getFirst().getRank() == Rank.TWO
+            && selectedCards.getFirst().getSuit().compareTo(cardsOnTable.getFirst().getSuit()) > 0) {
+                return true;
+            }
+
+            return selectedIsFour;
+        }
+
+        if (tableIsPair && cardsOnTable.getFirst().getRank() == Rank.TWO) {
+            return selectedIsPair && selectedCards.getLast().getSuit().compareTo(cardsOnTable.getLast().getSuit()) > 0;
+        }
+
         if (cardsOnTable.size() != selectedCards.size()) {
             return false;
         }
@@ -144,9 +161,6 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
                 (tableIsSequence && !selectedIsSequence)) {
             return false;
         }
-
-        cardsOnTable.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
-        selectedCards.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
 
         for (int i = 0; i < cardsOnTable.size(); i++) {
             if (!isSameSuit(cardsOnTable.get(i), selectedCards.get(i))) return false;

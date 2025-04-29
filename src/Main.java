@@ -18,6 +18,7 @@ public class Main {
 
         WestCard c1 = new WestCard(Suit.HEARTS, Rank.TWO);
         WestCard c11 = new WestCard(Suit.DIAMONDS, Rank.TWO);
+        WestCard c13 = new WestCard(Suit.CLUBS, Rank.TWO);
         WestCard c12 = new WestCard(Suit.SPADES, Rank.TWO);
         WestCard c2 = new WestCard(Suit.DIAMONDS, Rank.THREE);
         WestCard c21 = new WestCard(Suit.HEARTS, Rank.THREE);
@@ -31,8 +32,8 @@ public class Main {
         WestCard c5 = new WestCard(Suit.HEARTS, Rank.SIX);
 
 
-        List<WestCard> cardsOnTable = new ArrayList<>(Arrays.asList(c21, c22, c23, c2));
-        List<WestCard> cardsSelected = new ArrayList<>(Arrays.asList(c31, c32, c33, c34));
+        List<WestCard> cardsOnTable = new ArrayList<>(Arrays.asList(c13, c12));
+        List<WestCard> cardsSelected = new ArrayList<>(Arrays.asList(c1, c11));
 
         cardsOnTable.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
         cardsSelected.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
