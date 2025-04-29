@@ -17,15 +17,27 @@ public class Main {
         WestCardDeck hi = new WestCardDeck();
 
         WestCard c1 = new WestCard(Suit.HEARTS, Rank.TWO);
+        WestCard c11 = new WestCard(Suit.DIAMONDS, Rank.TWO);
+        WestCard c12 = new WestCard(Suit.SPADES, Rank.TWO);
         WestCard c2 = new WestCard(Suit.DIAMONDS, Rank.THREE);
-        WestCard c3 = new WestCard(Suit.SPADES, Rank.FOUR);
-        WestCard c4 = new WestCard(Suit.CLUBS, Rank.FIVE);
-        WestCard c5 = new WestCard(Suit.HEARTS, Rank.ACE);
+        WestCard c21 = new WestCard(Suit.HEARTS, Rank.THREE);
+        WestCard c22 = new WestCard(Suit.CLUBS, Rank.THREE);
+        WestCard c23 = new WestCard(Suit.SPADES, Rank.THREE);
+        WestCard c31 = new WestCard(Suit.HEARTS, Rank.FOUR);
+        WestCard c32 = new WestCard(Suit.DIAMONDS, Rank.FOUR);
+        WestCard c33 = new WestCard(Suit.SPADES, Rank.FOUR);
+        WestCard c34 = new WestCard(Suit.CLUBS, Rank.FOUR);
+        WestCard c41 = new WestCard(Suit.HEARTS, Rank.FIVE);
+        WestCard c5 = new WestCard(Suit.HEARTS, Rank.SIX);
 
-        List<WestCard> cards = new ArrayList<>(Arrays.asList(c1, c2, c3, c4, c5));
-        cards.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
-        System.out.println(cards);
-//        System.out.println(logic2.compareCards(c2, c5));
 
+        List<WestCard> cardsOnTable = new ArrayList<>(Arrays.asList(c21, c22, c23, c2));
+        List<WestCard> cardsSelected = new ArrayList<>(Arrays.asList(c31, c32, c33, c34));
+
+        cardsOnTable.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
+        cardsSelected.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
+        System.out.println(cardsOnTable);
+        System.out.println(cardsSelected);
+        System.out.println(logic2.isCounter(cardsOnTable, cardsSelected));
     }
 }

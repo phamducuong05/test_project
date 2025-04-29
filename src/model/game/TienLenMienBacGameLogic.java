@@ -31,11 +31,11 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
     @Override
     public boolean isValidMove(TienLenPlayer player) {
         List<WestCard> selectedCards = player.getSelectedCards();
-        if (selectedCards.isEmpty()) nextTurn();
-        if (selectedCards.size() == 1) {
-
+        if (selectedCards.isEmpty()) {
+            nextTurn();
+            return true;
         }
-        return !player.getHand().isEmpty();
+        return isCounter(cardsOnTable, selectedCards);
     }
 
     @Override
@@ -83,6 +83,10 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
         return cardsOnTable;
     }
 
+    public boolean isSameSuit(WestCard c1, WestCard c2) {
+        return c1.getSuit() == c2.getSuit();
+    }
+
     public boolean isSameColor(WestCard c1, WestCard c2) {
         boolean allRed = (c1.getSuit() == Suit.HEARTS && c2.getSuit() == Suit.DIAMONDS)
                 || (c1.getSuit() == Suit.DIAMONDS && c2.getSuit() == Suit.HEARTS);
@@ -118,5 +122,45 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
                 return false;
         }
         return true;
+    }
+
+    public boolean isCounter(List<WestCard> cardsOnTable, List<WestCard> selectedCards) {
+        boolean tableIsPair = isPair(cardsOnTable);
+        boolean selectedIsPair = isPair(selectedCards);
+        boolean tableIsThree = isThreeOfKind(cardsOnTable);
+        boolean selectedIsThree = isThreeOfKind(selectedCards);
+        boolean tableIsFour = isFourOfKind(cardsOnTable);
+        boolean selectedIsFour = isFourOfKind(selectedCards);
+        boolean tableIsSequence = isSequence(cardsOnTable);
+        boolean selectedIsSequence = isSequence(selectedCards);
+
+        if (cardsOnTable.size() != selectedCards.size()) {
+            return false;
+        }
+
+        if ((tableIsPair && !selectedIsPair) ||
+                (tableIsThree && !selectedIsThree) ||
+                (tableIsFour && !selectedIsFour) ||
+                (tableIsSequence && !selectedIsSequence)) {
+            return false;
+        }
+
+        cardsOnTable.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
+        selectedCards.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
+
+        for (int i = 0; i < cardsOnTable.size(); i++) {
+            if (!isSameSuit(cardsOnTable.get(i), selectedCards.get(i))) return false;
+        }
+
+        WestCard highestTableCard = cardsOnTable.getLast();
+        WestCard highestSelectedCard = selectedCards.getLast();
+
+        int rankComparison = highestSelectedCard.getRank().compareTo(highestTableCard.getRank());
+        if (rankComparison > 0) {
+            return true;
+        } else if (rankComparison == 0) {
+            return highestSelectedCard.getSuit().compareTo(highestTableCard.getSuit()) > 0;
+        }
+        return false;
     }
 }
