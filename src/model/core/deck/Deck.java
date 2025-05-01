@@ -41,8 +41,8 @@ public abstract class Deck<T extends Card, P extends Player<T>> {
             throw new IllegalArgumentException("Not enough cards in deck");
         }
 
-        for (P player : players) {
-            player.receiveCard(deck.pop());
+        for (int i = 0; i < players.size() * handSize; i++) {
+            players.get(i % 4).receiveCard(deck.pop());
         }
     }
 }
