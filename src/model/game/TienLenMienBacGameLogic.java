@@ -32,8 +32,7 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
     public boolean isValidMove(TienLenPlayer player) {
         List<WestCard> selectedCards = player.getSelectedCards();
         if (selectedCards.isEmpty()) {
-            nextTurn();
-            return true;
+            return false;
         }
         return isCounter(cardsOnTable, selectedCards);
     }

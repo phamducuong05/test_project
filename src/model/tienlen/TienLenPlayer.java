@@ -3,34 +3,26 @@ package model.tienlen;
 import model.core.card.WestCard;
 import model.player.Player;
 
-public class TienLenPlayer extends Player<WestCard> {
+public abstract class TienLenPlayer extends Player<WestCard> {
+    public enum State {WAITING, PLAYING}
     private int playerNum;
     private int playerRank;
-    private playerState state;
+    private State state;
 
-    public enum playerState {
-        PLAYING,
-        WAITING
-    }
-
-
+    //Getters and Setters
     public TienLenPlayer(String name) {
         super(name);
     }
 
-    public boolean isPlaying() {
-        return getState() == playerState.PLAYING;
-    }
-
-    public playerState getState() {
+    public State getState() {
         return state;
     }
 
-    public void setState(playerState state) {
+    public void setState(State state) {
         this.state = state;
     }
 
     public void skipTurn() {
-        this.state = playerState.WAITING;
+        this.state = State.WAITING;
     }
 }
