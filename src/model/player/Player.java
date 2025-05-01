@@ -22,16 +22,9 @@ public abstract class Player<T extends Card> {
         this.name = name;
     }
 
-    public void receiveCard(T card) {
-        hand.add(card);
-    }
-
-    public int handSize() {
-        return hand.size();
-    }
-
+    // Getters and setters
     public List<T> getHand() {
-        return new ArrayList<>(this.hand);
+        return hand;
     }
 
     public void setHand(List<T> hand) {
@@ -39,20 +32,11 @@ public abstract class Player<T extends Card> {
     }
 
     public List<T> getSelectedCards() {
-        return new ArrayList<>(this.selectedCards);
+        return selectedCards;
     }
 
     public void setSelectedCards(List<T> selectedCards) {
         this.selectedCards = selectedCards;
-    }
-
-    public void selectCard(T card) {
-        selectedCards.add(card);
-    }
-
-    public List<T> playCard() {
-        hand.removeAll(selectedCards);
-        return new ArrayList<>(this.selectedCards);
     }
 
     public String getName() {
@@ -61,5 +45,23 @@ public abstract class Player<T extends Card> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    //Other methods
+    public int handSize() {
+        return hand.size();
+    }
+
+    public void receiveCard(T card) {
+        hand.add(card);
+    }
+
+    public void selectCard(T card) {
+        selectedCards.add(card);
+    }
+
+    public List<T> playCard() {
+        hand.removeAll(selectedCards);
+        return selectedCards;
     }
 }
