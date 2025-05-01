@@ -1,19 +1,57 @@
 package model.game;
 
 import model.core.card.WestCard;
+import model.core.deck.Deck;
 import model.core.enums.Rank;
 import model.core.enums.Suit;
+import model.tienlen.TienLenBotPlayer;
 import model.tienlen.TienLenPlayer;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
     private List<WestCard> cardsOnTable;
+    private int countSkip = 0;
+
+    public TienLenMienBacGameLogic() {
+        cardsOnTable = new ArrayList<>();
+    }
+
+    public TienLenMienBacGameLogic(Deck<WestCard, TienLenPlayer> deck, List<TienLenPlayer> players, int numberOfCards) {
+        super(deck, players, numberOfCards);
+        cardsOnTable = new ArrayList<>();
+    }
 
     @Override
     public void playTurn() {
+        System.out.print("Current: " + getCurrentPlayer().getName() + " | ");
+        if(currentPlayer instanceof TienLenBotPlayer){
+            List<WestCard> cardsPlayed = ((TienLenBotPlayer) currentPlayer).autoPlay(cardsOnTable);
+            if(cardsPlayed.isEmpty()){
+                System.out.print("Skip" + " | Cards left: " + currentPlayer.handSize());
+                countSkip++;
+            }
+            else{
+                System.out.print("Play: " + cardsPlayed + " | Cards left: " + currentPlayer.handSize());
+                cardsOnTable = new ArrayList<>(cardsPlayed);
+                countSkip = 0;
+            }
+            System.out.println(" | Card on table: " + cardsOnTable);
+        }
+        else{
+            System.out.println("Further development here....");
+        }
+        nextTurn();
+    }
 
+    public void resetTurn(){
+        if (countSkip == 3){
+            cardsOnTable = new ArrayList<>();
+            countSkip = 0;
+            System.out.println("Reset Turn");
+        }
     }
 
     @Override
@@ -32,8 +70,7 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
     public boolean isValidMove(TienLenPlayer player) {
         List<WestCard> selectedCards = player.getSelectedCards();
         if (selectedCards.isEmpty()) {
-            nextTurn();
-            return true;
+            return false;
         }
         return isCounter(cardsOnTable, selectedCards);
     }
