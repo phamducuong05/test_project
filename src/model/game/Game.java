@@ -29,7 +29,6 @@ public abstract class Game<T extends Card, P extends Player<T>> {
             System.err.println("Lỗi: Bộ bài (deck) chưa được khởi tạo!");
             return;
         }
-        deck.shuffle();
         deck.dealCards(players, numberOfCards);
         currentPlayer = getFirstPlayer(players);
         if (players == null || players.isEmpty()) {

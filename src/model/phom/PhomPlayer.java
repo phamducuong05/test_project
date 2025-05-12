@@ -1,22 +1,33 @@
 package model.phom;
-
 import model.core.card.WestCard;
 import model.core.enums.Rank;
 import model.player.Player;
-
 import java.util.*;
 
-public class PhomPlayer extends Player<WestCard> {
-    private static final int MAX_DISCARD_CARDS = 4;
+public abstract class PhomPlayer extends Player<WestCard> {
+    private List<WestCard> discardCards;
     private int numberOfPhom;
-    private int numberOfDiscardCards;
+
+    public PhomPlayer() {}
 
     public PhomPlayer(String name) {
         super(name);
+        discardCards = new ArrayList<>();
         numberOfPhom = 0;
-        numberOfDiscardCards = 0;
     }
 
+    public List<WestCard> getDiscardCards() {
+        return discardCards;
+    }
+
+    public void addDiscardCards(WestCard card) {
+        if(card != null)
+            this.discardCards.add(card);
+    }
+
+    public void removeCards(List<WestCard> cards) {
+        this.getHand().removeAll(cards);
+    }
 
     public List<List<WestCard>> findCombinations() {
         List<List<WestCard>> allPhoms = new ArrayList<>();
@@ -59,55 +70,56 @@ public class PhomPlayer extends Player<WestCard> {
         }
 
         for (List<WestCard> cards : suitMap.values()) {
-            List<WestCard> cards1 = new ArrayList<>(); // Các card
-            int numberOfConsecutive = 1;
-            for (int i = 0; i < cards.size() - 1; i++) {
-                if (cards.get(i).getRank().getValue() + 1 == cards.get(i + 1).getRank().getValue()) {
-                    numberOfConsecutive++;
-                } else {
-                    if (numberOfConsecutive >= 3) {
-                        while (numberOfConsecutive >= 0) {
-                            cards1.add(cards.get(i - numberOfConsecutive));
-                            numberOfConsecutive--;
-                        }
-                        allPhoms.add(cards1);
-                        cards1 = new ArrayList<>();
-                    }
-                    numberOfConsecutive = 1;
-                }
+            for( List<WestCard> cardsTemporary : findAllConsecutive(cards)) {
+                allPhoms.add(cardsTemporary);
             }
         }
         numberOfPhom = allPhoms.size();
         return allPhoms;
     }
 
-    public boolean drawFromDiscard(Stack<WestCard> discardCards) {
-        findCombinations();
-        int tmp = this.numberOfPhom;
-        WestCard newCard = discardCards.pop();
-        this.receiveCard(newCard);
-        findCombinations();
-        if (this.numberOfPhom == tmp) {
-            discardCards.push(newCard);
-            this.getHand().remove(newCard);
-            return false;
+    public List<List<WestCard>> findAllConsecutive(List<WestCard> cards) {
+        List<List<WestCard>> result = new ArrayList<>();
+        int numberOfConsecutive = 1;
+        List<WestCard> subResult = new ArrayList<>();
+        subResult.add(cards.get(0));
+        for(int i = 0; i < cards.size() - 1; i++) {
+            if(cards.get(i).getRank().getValue() + 1 == cards.get(i + 1).getRank().getValue()) {
+                numberOfConsecutive++;
+                subResult.add(cards.get(i + 1));
+            }
+            else{
+                if(numberOfConsecutive >= 3) {
+                    result.add(subResult);
+                }
+                subResult = new ArrayList<>();
+                subResult.add(cards.get(i + 1));
+                numberOfConsecutive = 1;
+            }
         }
-        return true;
+        if(numberOfConsecutive >= 3) {
+            result.add(subResult);
+        }
+        return result;
     }
 
-    public void removeCards(List<WestCard> cards) {
-        this.getHand().removeAll(cards);
+    public int getNumberOfPhom() {
+        return numberOfPhom;
     }
 
     public int calculateScore() {
-        for (List<WestCard> cards : findCombinations()) {
-            this.removeCards(cards);
+        int score = 0;
+        for (List<WestCard> phom : findCombinations()) {
+            this.removeCards(phom);
         }
-        int totalScore = 0;
         for (WestCard card : this.getHand()) {
-            totalScore += card.getRank().getValue();
+            score += card.getRank().getValue();
         }
-        return totalScore;
+        return score;
     }
 
+    public abstract boolean decideToEat(WestCard discardedCard, PhomGameState gameState);
+    public abstract WestCard decideDiscard(PhomGameState gameState);
+    public abstract List<List<WestCard>> decideMelds(PhomGameState gameState);
+    public abstract Map<WestCard, List<WestCard>> decideSends(PhomGameState gameState);
 }

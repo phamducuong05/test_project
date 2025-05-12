@@ -4,7 +4,6 @@ import model.core.card.WestCard;
 import model.core.enums.Rank;
 import model.core.enums.Suit;
 import model.tienlen.TienLenPlayer;
-
 import java.util.Comparator;
 import java.util.List;
 

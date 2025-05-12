@@ -16,6 +16,7 @@ public abstract class Player<T extends Card> {
         this.name = "Anonymous Player";
     }
 
+
     public Player(String name) {
         this.hand = new ArrayList<>();
         this.selectedCards = new ArrayList<>();

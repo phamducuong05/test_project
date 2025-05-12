@@ -45,4 +45,8 @@ public abstract class Deck<T extends Card, P extends Player<T>> {
             players.get(i % 4).receiveCard(deck.pop());
         }
     }
+
+    public int size() {
+        return deck.size();
+    }
 }
