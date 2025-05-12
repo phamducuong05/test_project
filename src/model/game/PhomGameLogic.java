@@ -110,7 +110,6 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
         if(currentPlayer == this.gameEndPlayer) {
             this.discardTurnCounter++;
         }
-        nextTurn();
         return;
     }
 
@@ -160,10 +159,10 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
     }
 
     public boolean isValidCombination(List<WestCard> cards) {
-        if(cards.getFirst().getSuit() == cards.getLast().getSuit()) {
-            Suit tmp = cards.getFirst().getSuit();
+        if(cards.getFirst().getSuit() != cards.getLast().getSuit()) {
+            int tmp = cards.getFirst().getRank().getValue();
             for(WestCard card : cards) {
-                if(card.getSuit() != tmp) {
+                if(card.getRank().getValue() != tmp) {
                     return false;
                 }
             }
