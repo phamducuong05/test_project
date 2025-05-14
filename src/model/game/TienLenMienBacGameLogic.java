@@ -78,7 +78,7 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
     @Override
     public boolean endGame() {
         for (TienLenPlayer player : players) {
-            if (player.getHand().isEmpty()) return false;
+            if (!player.getHand().isEmpty()) return false;
         }
         return true;
     }
@@ -91,8 +91,7 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
 
     public void playCards(List<WestCard> cards) {
         if (isValidCombination(cards)) {
-            cardsOnTable = currentPlayer.getSelectedCards();
-            currentPlayer.setSelectedCards(currentPlayer.playCard());
+            cardsOnTable = currentPlayer.playCard();
             System.out.println(currentPlayer.getName() + " played: " + formatCards(cards));
         } else {
             System.out.println("Invalid card combination!");
