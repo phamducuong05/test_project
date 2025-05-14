@@ -40,10 +40,15 @@ public abstract class Game<T extends Card, P extends Player<T>> {
             return;
         }
         System.out.println("Game started! Dealing... " + numberOfCards + " cards to " + players.size() + " players.");
+
     }
 
 
     public abstract void playTurn();
+
+    public void setCurrentPlayer(P currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
 
     public P getCurrentPlayer() {
         return currentPlayer;

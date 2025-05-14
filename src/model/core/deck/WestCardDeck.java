@@ -5,7 +5,7 @@ import model.core.enums.Rank;
 import model.core.enums.Suit;
 import model.player.Player;
 
-public class WestCardDeck extends Deck<WestCard, Player<WestCard>> {
+public class WestCardDeck<P extends Player<WestCard>> extends Deck<WestCard, P> {
     @Override
     protected void initializeDeck() {
         for (Suit suit : Suit.values()) {

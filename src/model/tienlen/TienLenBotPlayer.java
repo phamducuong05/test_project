@@ -9,11 +9,10 @@ import model.player.Player;
 import java.util.*;
 
 public class TienLenBotPlayer extends TienLenPlayer {
-    private final TienLenMienBacGameLogic gameLogic;
+    private final TienLenMienBacGameLogic gameLogic = new TienLenMienBacGameLogic();
 
-    public TienLenBotPlayer(String name, TienLenMienBacGameLogic gameLogic) {
+    public TienLenBotPlayer(String name) {
         super(name);
-        this.gameLogic = gameLogic;
     }
 
     public boolean isPlaying() {
@@ -33,54 +32,51 @@ public class TienLenBotPlayer extends TienLenPlayer {
      *
      * @param cardsOnTable: Danh sách các quân bài đang ở trên bàn
      */
-    public void autoPlay(List<WestCard> cardsOnTable){
+
+    public List<WestCard> autoPlay(List<WestCard> cardsOnTable) {
         Helper helper = new Helper();
+        List<WestCard> selected = new ArrayList<>();
         // Analyze the current table
+        boolean tableIsNone = cardsOnTable.isEmpty();
         boolean tableIsSingle = (cardsOnTable.size() == 1);
         boolean tableIsPair = gameLogic.isPair(cardsOnTable);
         boolean tableIsThree = gameLogic.isThreeOfKind(cardsOnTable);
         boolean tableIsFour = gameLogic.isFourOfKind(cardsOnTable);
         boolean tableIsSequence = gameLogic.isSequence(cardsOnTable);
 
-        // Play according to the current table
         cardsOnTable.sort(Comparator.comparing((WestCard c) -> c.getRank().ordinal()).thenComparing((WestCard c) -> c.getSuit().ordinal()));
         sortHand();
 
-        if(tableIsSingle){
+        if (tableIsNone) {
+            WestCard randomCard = getHand().get(new Random().nextInt(handSize()));
+            selected = List.of(randomCard);
+        } else if (tableIsSingle) {
             WestCard singleCard = helper.findSingleCard(getHand(), cardsOnTable);
-            if (singleCard != null){
-                setSelectedCards(new ArrayList<>(List.of(singleCard)));
-                System.out.println("Played: " + playCard());
-                return;
+            if (singleCard != null) {
+                selected = List.of(singleCard);
+            } else if (cardsOnTable.getFirst().getRank() == Rank.TWO) {
+                selected = helper.findFour(getHand(), cardsOnTable);
             }
-            if (cardsOnTable.getFirst().getRank() == Rank.TWO){
-                List<WestCard> four = helper.findFour(getHand(), cardsOnTable);
-                if (!four.isEmpty()){
-                    setSelectedCards(four);
-                }
-            }
-        }
-        else if(tableIsPair){
-            setSelectedCards(helper.findPair(getHand(), cardsOnTable));
-        }
-        else if(tableIsThree){
-            setSelectedCards(helper.findThree(getHand(), cardsOnTable));
-        }
-        else if(tableIsFour){
-            setSelectedCards(helper.findFour(getHand(), cardsOnTable));
-        }
-        else if(tableIsSequence){
-            setSelectedCards(helper.findSequence(getHand(), cardsOnTable));
-        }
-        else{
+        } else if (tableIsPair) {
+            selected = helper.findPair(getHand(), cardsOnTable);
+        } else if (tableIsThree) {
+            selected = helper.findThree(getHand(), cardsOnTable);
+        } else if (tableIsFour) {
+            selected = helper.findFour(getHand(), cardsOnTable);
+        } else if (tableIsSequence) {
+            selected = helper.findSequence(getHand(), cardsOnTable);
+        } else {
             System.out.println("Cái đéo gì đây");
         }
-        if (getSelectedCards().isEmpty()){
-            System.out.println("Skip");
+
+        if (selected == null || selected.isEmpty()) {
             skipTurn();
-        }
-        else{
-            System.out.println("Played: " + playCard());
+            return new ArrayList<>();
+        } else {
+            setSelectedCards(new ArrayList<>(selected));
+            List<WestCard> played = playCard();
+            setSelectedCards(new ArrayList<>());
+            return played;
         }
     }
 
@@ -88,17 +84,17 @@ public class TienLenBotPlayer extends TienLenPlayer {
         private final WestCardComparator comparator = new WestCardComparator();
         private final TienLenMienBacGameLogic gameLogic = new TienLenMienBacGameLogic();
         public WestCard findSingleCard(List<WestCard> hand, List<WestCard> cardsOnTable){
-            WestCard cardOnTable = cardsOnTable.getFirst();
-            if(cardOnTable.getRank() == Rank.TWO){
-                for (WestCard card : hand){
-                    if (comparator.compare(card, cardOnTable) > 0){
+            WestCard topCard = cardsOnTable.getFirst();
+
+            for (WestCard card : hand) {
+                // Nếu là lá 2 → chỉ cần mạnh hơn (cùng rank, chất cao hơn)
+                if (topCard.getRank() == Rank.TWO) {
+                    if (card.getRank() == Rank.TWO && comparator.compare(card, topCard) > 0) {
                         return card;
                     }
-                }
-            }
-            else{
-                for (WestCard card : hand){
-                    if(card.getSuit() == cardOnTable.getSuit() && comparator.compare(card, cardOnTable) > 0){
+                } else {
+                    // Bài khác → cùng chất và mạnh hơn
+                    if (card.getSuit() == topCard.getSuit() && comparator.compare(card, topCard) > 0) {
                         return card;
                     }
                 }

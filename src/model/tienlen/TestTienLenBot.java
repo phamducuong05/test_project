@@ -12,8 +12,9 @@ import java.util.List;
 
 public class TestTienLenBot {
     public static void main(String[] args) {
-        TienLenBotPlayer bot = new TienLenBotPlayer("Bot 1", new TienLenMienBacGameLogic());
-        WestCardDeck deck = new WestCardDeck();
+        TienLenBotPlayer bot = new TienLenBotPlayer("Bot 1");
+        WestCardDeck<TienLenPlayer> deck = new WestCardDeck();
+
         for (int i = 0; i < 10; i++){
             WestCard card = deck.drawCard();
             bot.receiveCard(card);
