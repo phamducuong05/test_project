@@ -4,10 +4,14 @@ import model.core.card.WestCard;
 import model.core.deck.Deck;
 import model.core.enums.Rank;
 import model.core.enums.Suit;
+import model.phom.PhomGameState;
+import model.phom.PhomPlayer;
 import model.tienlen.TienLenBotPlayer;
+import model.tienlen.TienLenGameState;
 import model.tienlen.TienLenPlayer;
 import java.util.ArrayList;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -213,4 +217,16 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
         }
         return false;
     }
+
+    public TienLenGameState getCurrentGameState() {
+        List<TienLenPlayer> currentPlayers = Collections.unmodifiableList(new ArrayList<>(this.players));
+        TienLenPlayer activePlayer = this.currentPlayer;
+        List<WestCard> cardsOnTable = Collections.unmodifiableList(new ArrayList<>(this.cardsOnTable));
+        return new TienLenGameState(
+                currentPlayers,
+                activePlayer,
+                cardsOnTable
+        );
+    }
+
 }
