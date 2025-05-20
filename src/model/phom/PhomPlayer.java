@@ -6,22 +6,30 @@ import java.util.*;
 
 public abstract class PhomPlayer extends Player<WestCard> {
     private List<WestCard> discardCards;
-    private int numberOfPhom;
     private List<WestCard> eatenCards;
     private List<List<WestCard>> allPhoms;
+    private int numOfTurn;
 
     public PhomPlayer() {}
 
     public PhomPlayer(String name) {
         super(name);
         discardCards = new ArrayList<>();
-        numberOfPhom = 0;
         eatenCards = new ArrayList<>();
         allPhoms = new ArrayList<>();
+        numOfTurn = 0;
     }
 
     public List<List<WestCard>> getAllPhoms() {
         return allPhoms;
+    }
+
+    public void setNumOfTurn(int numOfTurn) {
+        this.numOfTurn = numOfTurn;
+    }
+
+    public int getNumOfTurn() {
+        return numOfTurn;
     }
 
     public List<WestCard> getDiscardCards() {
@@ -83,7 +91,6 @@ public abstract class PhomPlayer extends Player<WestCard> {
                 allPhoms.add(cardsTemporary);
             }
         }
-        numberOfPhom = allPhoms.size();
         return allPhoms;
     }
 
@@ -112,9 +119,6 @@ public abstract class PhomPlayer extends Player<WestCard> {
         return result;
     }
 
-    public int getNumberOfPhom() {
-        return numberOfPhom;
-    }
 
     public int calculateScore() {
         int score = 0;

@@ -54,7 +54,8 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
     public PhomPlayer getFirstPlayer(List<PhomPlayer> players) {
         return players.getFirst();
     }
-    
+
+
     public void botDiscardCard() {
         PhomBotPlayer botPlayer = (PhomBotPlayer) currentPlayer;
         botPlayer.getHand().remove(botPlayer.decideDiscard());
@@ -62,12 +63,6 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
         cardsOnTable = botPlayer.decideDiscard();
     }
 
-    public void botDrawCard() {
-        if(!deck.isEmpty()) {
-            WestCard card = deck.drawCard();
-            currentPlayer.receiveCard(card);
-        }
-    }
 
     public void botEatCard() {
         currentPlayer.getEatenCards().add(cardsOnTable);
@@ -117,6 +112,7 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
         currentPlayer.addDiscardCards(card);
         currentPlayer.getHand().remove(card);
         cardsOnTable = card;
+        currentPlayer.setNumOfTurn(currentPlayer.getNumOfTurn() + 1);
     }
 
     public void playerDrawCard() {
@@ -152,10 +148,15 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
                 return true;
             }
         }
-
-
-
         return false;
+    }
+
+    public void playerMeldCard() {
+        for(List<WestCard> meld : currentPlayer.findCombinations()) {
+            currentPlayer.getHand().removeAll(meld);
+            currentPlayer.getAllPhoms().add(meld);
+            this.MeldedCards.add(meld);
+        }
     }
 
     @Override
@@ -228,13 +229,7 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
         }
     }
 
-    private void initiateFinalMeldingPhase() {
-        for(PhomPlayer player : players) {
-            for(List<WestCard> cards : player.findCombinations()) {
-                MeldedCards.add(cards);
-            }
-        }
-    }
+
 
     public PhomGameState getCurrentGameState() {
         List<PhomPlayer> currentPlayers = Collections.unmodifiableList(new ArrayList<>(this.players));
@@ -245,8 +240,13 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
                 activePlayer,
                 currentMeldedCards,
                 endGame(),
-                winnerPlayer
+                winnerPlayer,
+                cardsOnTable
         );
+    }
+
+    public WestCard getCardsOnTable() {
+        return cardsOnTable;
     }
 
 

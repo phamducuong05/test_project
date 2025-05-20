@@ -12,13 +12,15 @@ public class PhomGameState {
     private final List<List<WestCard>> allPlayerMelds;
     private final boolean isGameOver;
     private final PhomPlayer winner;
+    private final WestCard cardOnTable;
 
-    public PhomGameState(List<PhomPlayer> players, PhomPlayer currentPlayer, List<List<WestCard>> allPlayerMelds, boolean isGameOver, PhomPlayer winner) {
+    public PhomGameState(List<PhomPlayer> players, PhomPlayer currentPlayer, List<List<WestCard>> allPlayerMelds, boolean isGameOver, PhomPlayer winner, WestCard cardOnTable) {
         this.players = players;
         this.currentPlayer = currentPlayer;
         this.allPlayerMelds = allPlayerMelds;
         this.isGameOver = isGameOver;
         this.winner = winner;
+        this.cardOnTable = cardOnTable;
     }
     
 
@@ -44,5 +46,9 @@ public class PhomGameState {
 
     public PhomPlayer getWinner() {
         return winner;
+    }
+
+    public WestCard getCardOnTable() {
+        return cardOnTable;
     }
 }

@@ -125,20 +125,16 @@ public class PhomGameViewController implements PhomViewController {
         if (logicController != null) {
             PhomPlayer currentPlayer = logicController.getCurrentPlayer();
             PhomGameState gameState = logicController.getGameLogic().getCurrentGameState();
-            WestCard topCard = gameState.getTopCardOnTable();
+            WestCard topCard = gameState.getCardOnTable();
             
             if (topCard != null) {
                 logicController.playerRequestsEat(currentPlayer, topCard);
-                System.out.println("Player " + currentPlayer.getName() + " eats card: " + topCard);
             } else {
                 System.out.println("No card to eat");
             }
         }
     }
-    
-    /**
-     * Handle discard button click
-     */
+
     public void handleDiscardButtonClick() {
         if (logicController != null && !selectedCards.isEmpty()) {
             PhomPlayer currentPlayer = logicController.getCurrentPlayer();
@@ -148,20 +144,7 @@ public class PhomGameViewController implements PhomViewController {
             System.out.println("No card selected to discard");
         }
     }
-    
-    /**
-     * Handle meld button click
-     */
-    public void handleMeldButtonClick() {
-        if (logicController != null && selectedCards.size() >= 3) {
-            PhomPlayer currentPlayer = logicController.getCurrentPlayer();
-            logicController.playerRequestsMeld(currentPlayer, new ArrayList<>(selectedCards));
-            System.out.println("Player " + currentPlayer.getName() + " creates meld with " + selectedCards.size() + " cards");
-            selectedCards.clear();
-        } else {
-            System.out.println("Not enough cards selected for meld (need at least 3)");
-        }
-    }
+
 
     public List<WestCard> getSelectedCards() {
         return selectedCards;

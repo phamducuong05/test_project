@@ -41,8 +41,8 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
         // Handle different types of moves based on the action type
         if (move instanceof PhomPlayerAction.DrawCardAction) {
             // Player draws a card from the deck
-            WestCard drawnCard = gameLogic.getDeck().drawCard();
-            player.receiveCard(drawnCard);
+            gameLogic.playerDrawCard();
+            viewController.updatePlayerHands(gameLogic.getCurrentGameState());
             
             // After drawing, player must discard a card
             if (viewController != null) {
@@ -55,12 +55,12 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
             WestCard cardToEat = eatAction.getCard();
             
             // Implement eat card logic here
-            player.receiveCard(cardToEat);
+            gameLogic.humanEatCard();
             
             // Use the game's state to remove the card from the table
             PhomGameState gameState = gameLogic.getCurrentGameState();
-            List<WestCard> cardsOnTable = gameState.getCardsOnTable();
-            cardsOnTable.remove(cardToEat);
+            viewController.updatePlayerHands(gameState);
+            // viewController.updateDiscardPile
             
             // After eating, player must discard a card
             if (viewController != null) {
@@ -76,24 +76,12 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
             // Add to cards on table in the game state
             PhomGameState gameState = gameLogic.getCurrentGameState();
             // update hand and updateDiscardPile
+            viewController.updatePlayerHands(gameState);
+            // viewController.updateDiscardPile
+
             // Move to next turn after discard
             nextTurn();
             
-        } else if (move instanceof PhomPlayerAction.MeldAction) {
-            // Player creates a meld (phom)
-            PhomPlayerAction.MeldAction meldAction = (PhomPlayerAction.MeldAction) move;
-            List<WestCard> cardsToMeld = meldAction.getCards();
-            
-            // Implement meld logic here
-            // Remove cards from player's hand
-            player.getHand().removeAll(cardsToMeld);
-            
-            // Add meld to player's melds in the game state
-            PhomGameState gameState = gameLogic.getCurrentGameState();
-            gameState.getPlayerMelds(player).add(cardsToMeld);
-            
-            // Update game state after melding
-            updateGameState();
         }
     }
 
@@ -108,8 +96,14 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
     protected void nextTurn() {
         // Check xem người đánh lượt vừa rồi có đủ 4 quân ở trên chồng bài đánh chưa
         // Nếu đủ rồi thì cho hạ phỏm
-
+        if(gameLogic.getCurrentPlayer().getNumOfTurn() == 4) {
+            gameLogic.playerMeldCard();
+            // viewUpdateMeldCards
+            viewController.updatePlayerHands(gameLogic.getCurrentGameState());
+        }
         gameLogic.nextTurn();
+        viewController.updatePlayerHands(gameLogic.getCurrentGameState());
+        // viewController.updateMeldCards
 
         // viewController update hands and view controller update discard pile
         checkAndPlayBotTurnIfNeeded();
@@ -139,28 +133,30 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
 
             
             // First check if bot can/wants to eat the top card on table
-            WestCard topCard = gameState.getTopCardOnTable();
-            if (topCard != null && bot.shouldEatCard(topCard, gameState)) {
+            WestCard topCard = gameLogic.getCardsOnTable();
+            if (topCard != null && bot.decideToEat(topCard)) {
                 // Bot decides to eat card
-                processPlayerMove(bot, new PhomPlayerAction.EatCardAction(topCard));
-            } else {
+                gameLogic.botEatCard();
+                viewController.updatePlayerHands(gameState);
+                // viewController.updateDiscardPile
+            }
+            else {
                 // Bot draws a card
-                processPlayerMove(bot, new PhomPlayerAction.DrawCardAction());
+                gameLogic.playerDrawCard();
             }
-            
-            // Bot decides which melds to form (if any)
-            List<List<WestCard>> decidedMelds = bot.decidePossibleMelds(gameState);
-            for (List<WestCard> meld : decidedMelds) {
-                processPlayerMove(bot, new PhomPlayerAction.MeldAction(meld));
-            }
-            
-            // Bot decides which card to discard
-            WestCard cardToDiscard = bot.decideCardToDiscard(gameState);
-            processPlayerMove(bot, new PhomPlayerAction.DiscardCardAction(cardToDiscard));
+            gameLogic.botDiscardCard();
+            viewController.updatePlayerHands(gameState);
+            // viewController.updateDiscardPile
+
         } else {
             // Human player's turn - prompt for action via the view controller
             if (viewController != null) {
-                viewController.promptPlayerForAction(currentPlayer, gameLogic.getCurrentGameState());
+                if(gameLogic.canFormPhom(currentPlayer, gameLogic.getCardsOnTable())) {
+                    //viewController.promptPlayerToEat();
+                }
+                else {
+                    //viewController.promptPlayerToDraw();
+                }
             }
         }
     }
@@ -266,9 +262,5 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
         }
 
     }
-    
 
-    public void playerRequestsMeld(PhomPlayer player, List<WestCard> cards) {
-        processPlayerMove(player, new PhomPlayerAction.MeldAction(cards));
-    }
 } 

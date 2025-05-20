@@ -44,19 +44,5 @@ public class PhomPlayerAction {
             return card;
         }
     }
-    
-    /**
-     * Action for creating a meld (phom)
-     */
-    public static class MeldAction {
-        private final List<WestCard> cards;
-        
-        public MeldAction(List<WestCard> cards) {
-            this.cards = cards;
-        }
-        
-        public List<WestCard> getCards() {
-            return cards;
-        }
-    }
+
 } 
