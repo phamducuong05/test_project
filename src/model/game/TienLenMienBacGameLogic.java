@@ -17,6 +17,7 @@ import java.util.List;
 
 public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
     private List<WestCard> cardsOnTable;
+    private List<TienLenPlayer> playerRankings;
 
     public TienLenMienBacGameLogic() {
     }
@@ -25,28 +26,6 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
         super(deck, players, numberOfCards);
         cardsOnTable = new ArrayList<>();
     }
-
-//    @Override
-//    public void playTurn() {
-//        System.out.print("Current: " + getCurrentPlayer().getName() + " | ");
-//        if(currentPlayer instanceof TienLenBotPlayer){
-//            List<WestCard> cardsPlayed = ((TienLenBotPlayer) currentPlayer).autoPlay(cardsOnTable);
-//            if(cardsPlayed.isEmpty()){
-//                System.out.print("Skip" + " | Cards left: " + currentPlayer.handSize());
-//                countSkip++;
-//            }
-//            else{
-//                System.out.print("Play: " + cardsPlayed + " | Cards left: " + currentPlayer.handSize());
-//                cardsOnTable = new ArrayList<>(cardsPlayed);
-//                countSkip = 0;
-//            }
-//            System.out.println(" | Card on table: " + cardsOnTable);
-//        }
-//        else{
-//            System.out.println("Further development here....");
-//        }
-//        nextTurn();
-//    }
 
 
     @Override
@@ -61,6 +40,7 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
         return null;
     }
 
+
     @Override
     public boolean isValidMove(List<WestCard> selectedCards) {
         if (!isValidCombination(selectedCards)) return false;
@@ -70,7 +50,10 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
     @Override
     public boolean endGame() {
         for (TienLenPlayer player : players) {
-            if (!player.getHand().isEmpty()) return false;
+            if (!player.getHand().isEmpty() && !playerRankings.contains(player)) {
+                playerRankings.add(player);
+                return false;
+            }
         }
         return true;
     }
@@ -203,7 +186,8 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
                 currentPlayers,
                 activePlayer,
                 cardsOnTable,
-                endGame()
+                endGame(),
+                playerRankings
         );
     }
 

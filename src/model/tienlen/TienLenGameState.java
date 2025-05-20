@@ -13,22 +13,25 @@ public class TienLenGameState {
     private final TienLenPlayer currentPlayer;
     private final List<WestCard> cardsOnTable;
     private final boolean isGameOver;
+    private final List<TienLenPlayer> playerRankings;
 
     /**
      * Constructor for TienLenGameState
-     * 
+     *
      * @param players The list of players
      * @param currentPlayer The current player
      * @param cardsOnTable The cards on the table
      * @param isGameOver Whether the game is over
+     * @param playerRankings The player rankings
      *
      */
     public TienLenGameState(List<TienLenPlayer> players, TienLenPlayer currentPlayer,
-                            List<WestCard> cardsOnTable, boolean isGameOver) {
+                            List<WestCard> cardsOnTable, boolean isGameOver, List<TienLenPlayer> playerRankings) {
         this.players = players;
         this.currentPlayer = currentPlayer;
         this.cardsOnTable = cardsOnTable;
         this.isGameOver = isGameOver;
+        this.playerRankings = playerRankings;
     }
     
     /**
@@ -56,4 +59,13 @@ public class TienLenGameState {
     public boolean isGameOver() {
         return isGameOver;
     }
+    /**
+     * Get the list of cards on the table
+     *
+     * @return The list of cards on the table
+     */
+    public List<WestCard> getCardsOnTable() {
+        return cardsOnTable;
+    }
+
 }
