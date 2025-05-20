@@ -8,9 +8,17 @@ import model.player.Player;
 
 import java.util.*;
 
+/**
+ * A bot player implementation for TienLen game
+ */
 public class TienLenBotPlayer extends TienLenPlayer {
     private final TienLenMienBacGameLogic gameLogic = new TienLenMienBacGameLogic();
 
+    /**
+     * Constructor
+     * 
+     * @param name The name of the bot player
+     */
     public TienLenBotPlayer(String name) {
         super(name);
     }
@@ -21,6 +29,79 @@ public class TienLenBotPlayer extends TienLenPlayer {
 
     public void sortHand(){
         getHand().sort(Comparator.comparing((WestCard c) -> c.getRank().ordinal()).thenComparing((WestCard c) -> c.getSuit().ordinal()));
+    }
+
+    /**
+     * Decide which cards to play based on the current game state
+     * 
+     * @param gameState The current game state
+     * @return The cards to play, or null/empty to pass
+     */
+    public List<WestCard> decideCardsToPlay(TienLenGameState gameState) {
+        List<WestCard> hand = getHand();
+        List<WestCard> lastPlayed = gameState.getLastPlayedCards();
+        
+        // If this is the first play or we are starting a new round, play the lowest card
+        if (lastPlayed == null || lastPlayed.isEmpty()) {
+            return findLowestSingleCard();
+        }
+        
+        // Try to find a play that beats the last play
+        return findPlayThatBeatsLastPlay(lastPlayed);
+    }
+    
+    /**
+     * Find a single card with the lowest rank to play
+     * 
+     * @return A list containing the lowest card, or empty if no cards left
+     */
+    private List<WestCard> findLowestSingleCard() {
+        List<WestCard> hand = getHand();
+        if (hand.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        // Sort hand by rank
+        hand.sort(Comparator.comparingInt(card -> card.getRank().ordinal()));
+        
+        // Return lowest card
+        List<WestCard> result = new ArrayList<>();
+        result.add(hand.get(0));
+        return result;
+    }
+    
+    /**
+     * Find a play that beats the last played cards
+     * 
+     * @param lastPlayed The last played cards
+     * @return A list of cards that beats the last play, or empty to pass
+     */
+    private List<WestCard> findPlayThatBeatsLastPlay(List<WestCard> lastPlayed) {
+        // Must play same number of cards
+        int numCards = lastPlayed.size();
+        List<WestCard> hand = getHand();
+        
+        if (numCards == 1) {
+            // Single card play
+            WestCard lastCard = lastPlayed.get(0);
+            for (WestCard card : hand) {
+                if (card.getRank().ordinal() > lastCard.getRank().ordinal()) {
+                    List<WestCard> result = new ArrayList<>();
+                    result.add(card);
+                    return result;
+                }
+            }
+        } else if (numCards == 2) {
+            // Pair play - simplified implementation
+            // In a real implementation, would check for valid pairs based on TienLen rules
+        } else if (numCards == 3) {
+            // Three of a kind - simplified implementation
+        } else if (numCards >= 4) {
+            // Straight or other combinations - simplified implementation
+        }
+        
+        // No valid play found, pass
+        return new ArrayList<>();
     }
 
     /**

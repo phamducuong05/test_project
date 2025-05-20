@@ -11,13 +11,12 @@ import model.core.enums.Suit;
 import model.core.enums.Rank;
 import model.phom.PhomGameState;
 import java.util.Collections;
+import java.util.Map;
 
 public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
     private WestCard cardsOnTable;
     private PhomPlayer winnerPlayer;
     private List<List<WestCard>> MeldedCards; // Phom đã hạ
-    private int discardTurnCounter; // Đếm số lượt ĐÁNH BÀI của người đi đầu
-    private PhomPlayer gameEndPlayer; // Người chơi bắt đầu ván game
     private boolean isFinalMeldingPhase; // Cờ báo hiệu đang trong giai đoạn hạ bài cuối
 
 
@@ -27,7 +26,6 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
     public PhomGameLogic(Deck<WestCard, PhomPlayer> deck, List<PhomPlayer> players, int numberOfCards) {
         super(deck, players, numberOfCards);
         cardsOnTable = null;
-        this.discardTurnCounter = 0; // Khởi tạo bộ đếm
         this.isFinalMeldingPhase = false; // Khởi tạo cờ
     }
 
@@ -41,7 +39,6 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
         deck.dealCards(players, numberOfCards);
         players.getFirst().receiveCard(deck.drawCard());
         currentPlayer = getFirstPlayer(players);
-        this.gameEndPlayer = players.getLast();
         if (players == null || players.isEmpty()) {
             System.err.println("Lỗi: Không có người chơi nào!");
             return;
@@ -60,7 +57,7 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
 
     // bổ sung ù ở playturn
     @Override
-    public void playTurn() {
+    public void playBotTurn() {
         System.out.print("Current: " + getCurrentPlayer().getName() + " | ");
         if(currentPlayer instanceof PhomBotPlayer){
             if(cardsOnTable == null){
@@ -99,6 +96,51 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
 
         }
         else{
+            return ;
+        }
+
+        return;
+    }
+
+    public void playBotTurn() {
+        System.out.print("Current: " + getCurrentPlayer().getName() + " | ");
+        if(currentPlayer instanceof PhomBotPlayer){
+            if(cardsOnTable == null){
+                cardsOnTable = ((PhomBotPlayer) currentPlayer).autoPlay();
+                PhomPlayer nextPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) + 1) % getPlayers().size());
+                nextPlayer.addDiscardCards(cardsOnTable);
+                System.out.print("Play: " + cardsOnTable + " | Cards left: " + currentPlayer.handSize());
+                if(!endGame())
+                    nextTurn();
+
+            }
+            else if(!canFormPhom(currentPlayer, cardsOnTable)){
+                System.out.print("Cannot eat, draw 1 card");
+                if(!deck.isEmpty())
+                    currentPlayer.receiveCard(deck.drawCard());
+                else
+                    System.out.print("Out of cards");
+                cardsOnTable = ((PhomBotPlayer) currentPlayer).autoPlay();
+                PhomPlayer nextPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) + 1) % getPlayers().size());
+                nextPlayer.addDiscardCards(cardsOnTable);
+                System.out.print("Play: " + cardsOnTable + " | Cards left: " + currentPlayer.handSize());
+                if(!endGame())
+                    nextTurn();
+
+            }
+            else{
+                cardsOnTable = ((PhomBotPlayer) currentPlayer).autoPlay();
+                System.out.print("Play: " + cardsOnTable + " | Cards left: " + currentPlayer.handSize());
+                PhomPlayer nextPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) + 1) % getPlayers().size());
+                nextPlayer.addDiscardCards(cardsOnTable);
+                // Chuyển bài đã đánh ở dưới bàn và sang lượt tiếp theo
+                if(!endGame())
+                    nextTurn();
+
+            }
+
+        }
+        else{
             if(canFormPhom(currentPlayer, cardsOnTable)) {
                 // UI
             }
@@ -107,15 +149,92 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
             }
             // UI prompt play card
         }
-        if(currentPlayer == this.gameEndPlayer) {
-            this.discardTurnCounter++;
+
+        return;
+    }
+
+    public void botDiscardCard() {
+        PhomBotPlayer botPlayer = (PhomBotPlayer) currentPlayer;
+        botPlayer.getHand().remove(botPlayer.decideDiscard());
+        botPlayer.addDiscardCards(botPlayer.decideDiscard());
+        cardsOnTable = botPlayer.decideDiscard();
+    }
+
+    public void botDrawCard() {
+        if(!deck.isEmpty()) {
+            WestCard card = deck.drawCard();
+            currentPlayer.receiveCard(card);
+        }
+    }
+
+    public void botEatCard() {
+        currentPlayer.getEatenCards().add(cardsOnTable);
+        PhomPlayer previousPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) - 1) % getPlayers().size());
+        previousPlayer.getDiscardCards().remove(cardsOnTable);
+    }
+
+    public void botSendCard() {
+        PhomBotPlayer botPlayer = (PhomBotPlayer) currentPlayer;
+        Map<WestCard, List<WestCard>> cardsToSend = botPlayer.decideSends(this.getCurrentGameState());
+
+        if (!cardsToSend.isEmpty()) {
+            // Lặp qua các lá bài mà bot muốn gửi
+            for (Map.Entry<WestCard, List<WestCard>> entry : cardsToSend.entrySet()) {
+                WestCard cardToSend = entry.getKey();
+                List<WestCard> meldToSendTo = entry.getValue(); // Phỏm mà bot muốn gửi vào
+
+                // Xác định người chơi sở hữu phỏm này
+                PhomPlayer recipient = null;
+                for (PhomPlayer player : this.getPlayers()) {
+                    if (player != currentPlayer && player.getAllPhoms().contains(meldToSendTo)) {
+                        recipient = player;
+                        break;
+                    }
+                }
+
+                if (recipient != null) {
+                    sendCardToMeld(currentPlayer, recipient, cardToSend, meldToSendTo);
+                    break; // Bot có thể quyết định chỉ gửi một lá mỗi lượt gửi bài
+                } else {
+                    System.out.println("Fail to send");
+                }
+            }
+        } else {
+            return;
         }
         return;
     }
 
+    public void sendCardToMeld(PhomPlayer sender, PhomPlayer recipient, WestCard cardToSend, List<WestCard> meldToSendTo) {
+        sender.getHand().remove(cardToSend);
+        meldToSendTo.add(cardToSend);
+    }
+
+
+
+    public void humanDiscardCard(WestCard card) {
+        currentPlayer.addDiscardCards(card);
+        currentPlayer.getHand().remove(card);
+        cardsOnTable = card;
+    }
+
+    public void humanDrawCard() {
+        if(!deck.isEmpty()) {
+            WestCard card = deck.drawCard();
+            currentPlayer.receiveCard(card);
+        }
+    }
+
+
+    public void humanEatCard() {
+        currentPlayer.getEatenCards().add(cardsOnTable);
+        PhomPlayer previousPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) - 1) % getPlayers().size());
+        previousPlayer.getDiscardCards().remove(cardsOnTable);
+    }
+
     @Override
-    public boolean isValidMove(PhomPlayer player) {
-        return player.getSelectedCards().size() == 1;
+    public boolean isValidMove(List<WestCard> cards) {
+        return cards.size() == 1;
     }
 
     @Override
@@ -133,9 +252,7 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
             }
         }
 
-        if (discardTurnCounter >= 4) { // Đủ 4 lượt đánh của người đi đầu
-            return true;
-        }
+
 
         return false;
     }

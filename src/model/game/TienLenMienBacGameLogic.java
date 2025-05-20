@@ -225,7 +225,8 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
         return new TienLenGameState(
                 currentPlayers,
                 activePlayer,
-                cardsOnTable
+                cardsOnTable,
+
         );
     }
 

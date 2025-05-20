@@ -11,12 +11,12 @@ public class PhomHumanPlayer extends PhomPlayer{
     }
 
     @Override
-    public boolean decideToEat(WestCard discardedCard, PhomGameState gameState) {
+    public boolean decideToEat(WestCard discardedCard) {
         throw new UnsupportedOperationException("Human decision handled by Controller via UI.");
     }
 
     @Override
-    public WestCard decideDiscard(PhomGameState gameState) {
+    public WestCard decideDiscard() {
         throw new UnsupportedOperationException("Human decision handled by Controller via UI.");
     }
 

@@ -7,6 +7,8 @@ import java.util.*;
 public abstract class PhomPlayer extends Player<WestCard> {
     private List<WestCard> discardCards;
     private int numberOfPhom;
+    private List<WestCard> eatenCards;
+    private List<List<WestCard>> allPhoms;
 
     public PhomPlayer() {}
 
@@ -14,10 +16,20 @@ public abstract class PhomPlayer extends Player<WestCard> {
         super(name);
         discardCards = new ArrayList<>();
         numberOfPhom = 0;
+        eatenCards = new ArrayList<>();
+        allPhoms = new ArrayList<>();
+    }
+
+    public List<List<WestCard>> getAllPhoms() {
+        return allPhoms;
     }
 
     public List<WestCard> getDiscardCards() {
         return discardCards;
+    }
+
+    public List<WestCard> getEatenCards() {
+        return eatenCards;
     }
 
     public void addDiscardCards(WestCard card) {
@@ -25,9 +37,6 @@ public abstract class PhomPlayer extends Player<WestCard> {
             this.discardCards.add(card);
     }
 
-    public void removeCards(List<WestCard> cards) {
-        this.getHand().removeAll(cards);
-    }
 
     public List<List<WestCard>> findCombinations() {
         List<List<WestCard>> allPhoms = new ArrayList<>();
@@ -110,7 +119,7 @@ public abstract class PhomPlayer extends Player<WestCard> {
     public int calculateScore() {
         int score = 0;
         for (List<WestCard> phom : findCombinations()) {
-            this.removeCards(phom);
+            this.getHand().removeAll(phom);
         }
         for (WestCard card : this.getHand()) {
             score += card.getRank().getValue();
@@ -118,8 +127,7 @@ public abstract class PhomPlayer extends Player<WestCard> {
         return score;
     }
 
-    public abstract boolean decideToEat(WestCard discardedCard, PhomGameState gameState);
-    public abstract WestCard decideDiscard(PhomGameState gameState);
-    public abstract List<List<WestCard>> decideMelds(PhomGameState gameState);
+    public abstract boolean decideToEat(WestCard discardedCard);
+    public abstract WestCard decideDiscard();
     public abstract Map<WestCard, List<WestCard>> decideSends(PhomGameState gameState);
 }

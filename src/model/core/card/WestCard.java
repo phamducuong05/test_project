@@ -2,7 +2,7 @@ package model.core.card;
 
 import model.core.enums.Rank;
 import model.core.enums.Suit;
-import java.util.Comparator;
+import java.util.Objects;
 
 public class WestCard extends Card {
     private final Suit suit;
@@ -24,7 +24,22 @@ public class WestCard extends Card {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WestCard westCard = (WestCard) o;
+        return rank == westCard.rank && suit == westCard.suit;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rank, suit);
+    }
+
+    @Override
     public String toString() {
         return rank.name() + " of " + suit.name();
     }
+
+
 }

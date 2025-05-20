@@ -2,76 +2,88 @@ package model.phom;
 
 import model.core.card.WestCard;
 import java.util.*;
+import model.game.PhomGameLogic;
+
 
 public class PhomBotPlayer extends PhomPlayer {
+    private PhomGameLogic gameLogic;
+
     public PhomBotPlayer(String name) {
         super(name);
+        gameLogic = new PhomGameLogic();
     }
 
+
     @Override
-    public boolean decideToEat(WestCard discardedCard, PhomGameState gameState) {
+    public boolean decideToEat(WestCard discardedCard) {
         if (discardedCard == null) return false;
         
-        List<WestCard> originalHand = new ArrayList<>(this.getHand());
-        
-        int originalPhomCount = findCombinations().size();
-        
-        this.receiveCard(discardedCard);
-        
-        int newPhomCount = findCombinations().size();
-        
-        this.getHand().remove(discardedCard);
-        
-        return newPhomCount > originalPhomCount;
+        return gameLogic.canFormPhom(this, discardedCard);
     }
 
     @Override
-    public WestCard decideDiscard(PhomGameState gameState) {
-        // Always try to discard trash cards (not part of any phoms)
+    public WestCard decideDiscard() {
         List<List<WestCard>> phoms = findCombinations();
-        
-        // Flatten all phoms into a single list
+
         List<WestCard> cardsInPhoms = new ArrayList<>();
         for (List<WestCard> phom : phoms) {
             cardsInPhoms.addAll(phom);
         }
-        
-        // Find cards not part of any phom (trash cards)
+
         List<WestCard> trashCards = new ArrayList<>();
         for (WestCard card : this.getHand()) {
-            if (!isCardInList(card, cardsInPhoms)) {
+            if (!cardsInPhoms.contains(card)) {
                 trashCards.add(card);
             }
         }
-        
-        // If there are trash cards, discard the one with the highest value to minimize the score
+
         if (!trashCards.isEmpty()) {
             trashCards.sort(Comparator.comparingInt(card -> -card.getRank().getValue())); 
             return trashCards.get(0); 
         }
-        
-        // If no trash cards, just discard the card with the highest value
+
         List<WestCard> hand = new ArrayList<>(this.getHand());
         hand.sort(Comparator.comparingInt(card -> -card.getRank().getValue())); 
         return hand.get(0); 
     }
 
-    private boolean isCardInList(WestCard card, List<WestCard> cardList) {
-        for (WestCard c : cardList) {
-            if (c.equals(card)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public List<List<WestCard>> decideMelds(PhomGameState gameState) {
-        return findCombinations();
-    }
 
     @Override
     public Map<WestCard, List<WestCard>> decideSends(PhomGameState gameState) {
-        return new HashMap<>();
+        Map<WestCard, List<WestCard>> cardsToSend = new HashMap<>();
+        List<List<WestCard>> allOpponentMelds = gameState.getAllPlayerMelds(); // Lấy tất cả phỏm của đối thủ
+
+        if (allOpponentMelds != null && !allOpponentMelds.isEmpty()) {
+            List<WestCard> trashCards = new ArrayList<>();
+            List<List<WestCard>> phoms = findCombinations();
+            List<WestCard> cardsInPhoms = new ArrayList<>();
+            for (List<WestCard> phom : phoms) {
+                cardsInPhoms.addAll(phom);
+            }
+
+            for (WestCard card : this.getHand()) {
+                if (!cardsInPhoms.contains(card)) {
+                    trashCards.add(card);
+                }
+            }
+
+            if (trashCards.isEmpty()) {
+                return new HashMap<>();
+            }
+
+
+            for (WestCard cardToSend : trashCards) {
+                for (List<WestCard> meld : allOpponentMelds) {
+                    List<WestCard> potentialMeld = new ArrayList<>(meld);
+                    potentialMeld.add(cardToSend);
+                    if (gameLogic.isValidCombination(potentialMeld)) {
+                        cardsToSend.put(cardToSend, meld);
+                    }
+                    trashCards.remove(cardToSend);
+                    break;
+                }
+            }
+        }
+        return cardsToSend;
     }
 }

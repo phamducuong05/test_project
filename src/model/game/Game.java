@@ -44,7 +44,9 @@ public abstract class Game<T extends Card, P extends Player<T>> {
     }
 
 
-    public abstract void playTurn();
+    public abstract void playBotTurn();
+
+    public abstract void playHumanTurn();
 
     public void setCurrentPlayer(P currentPlayer) {
         this.currentPlayer = currentPlayer;
@@ -60,7 +62,7 @@ public abstract class Game<T extends Card, P extends Player<T>> {
 
     public abstract P getFirstPlayer(List<P> players);
 
-    public abstract boolean isValidMove(P player);
+    public abstract boolean isValidMove(List<T> cards);
 
     public abstract boolean endGame();
 

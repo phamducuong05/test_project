@@ -7,38 +7,115 @@ import model.core.deck.WestCardDeck;
 import model.core.enums.Rank;
 import model.core.enums.Suit;
 import model.game.TienLenMienBacGameLogic;
+import controller.MainGameController;
+import controller.PhomLogicController;
+import controller.PhomViewController;
+import controller.TienLenLogicController;
+import controller.TienLenViewController;
+import model.phom.PhomBotPlayer;
+import model.phom.PhomPlayer;
+import model.tienlen.TienLenBotPlayer;
+import model.tienlen.TienLenPlayer;
+import view.PhomGameViewController;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        TienLenMienBacGameLogic logic2 = new TienLenMienBacGameLogic();
-        WestCardDeck deck = new WestCardDeck();
-        WestCardDeck hi = new WestCardDeck();
-
-        WestCard c1 = new WestCard(Suit.HEARTS, Rank.TWO);
-        WestCard c11 = new WestCard(Suit.DIAMONDS, Rank.TWO);
-        WestCard c13 = new WestCard(Suit.CLUBS, Rank.TWO);
-        WestCard c12 = new WestCard(Suit.SPADES, Rank.TWO);
-        WestCard c2 = new WestCard(Suit.DIAMONDS, Rank.THREE);
-        WestCard c21 = new WestCard(Suit.HEARTS, Rank.THREE);
-        WestCard c22 = new WestCard(Suit.CLUBS, Rank.THREE);
-        WestCard c23 = new WestCard(Suit.SPADES, Rank.THREE);
-        WestCard c31 = new WestCard(Suit.HEARTS, Rank.FOUR);
-        WestCard c32 = new WestCard(Suit.DIAMONDS, Rank.FOUR);
-        WestCard c33 = new WestCard(Suit.SPADES, Rank.FOUR);
-        WestCard c34 = new WestCard(Suit.CLUBS, Rank.FOUR);
-        WestCard c41 = new WestCard(Suit.HEARTS, Rank.FIVE);
-        WestCard c5 = new WestCard(Suit.HEARTS, Rank.SIX);
-
-
-        List<WestCard> cardsOnTable = new ArrayList<>(Arrays.asList(c13, c12));
-        List<WestCard> cardsSelected = new ArrayList<>(Arrays.asList(c1, c11));
-
-        cardsOnTable.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
-        cardsSelected.sort(Comparator.comparing(WestCard::getRank).thenComparing(WestCard::getSuit));
-        System.out.println(cardsOnTable);
-        System.out.println(cardsSelected);
-        System.out.println(logic2.isCounter(cardsOnTable, cardsSelected));
+        // This is a demonstration of the architecture without actual JavaFX integration
+        System.out.println("Starting Card Game Demo");
+        
+        // Choose which game to play
+        String gameType = "Phom"; // or "TienLen"
+        
+        if ("Phom".equals(gameType)) {
+            playPhomGame();
+        } else {
+            playTienLenGame();
+        }
+    }
+    
+    /**
+     * Set up and play a Phom game
+     */
+    private static void playPhomGame() {
+        System.out.println("\n=== Starting Phom Game ===\n");
+        
+        // Create players
+        List<PhomPlayer> players = new ArrayList<>();
+        players.add(new PhomBotPlayer("Human Player")); // Using PhomBotPlayer as a stand-in for human
+        players.add(new PhomBotPlayer("Bot 1"));
+        players.add(new PhomBotPlayer("Bot 2"));
+        players.add(new PhomBotPlayer("Bot 3"));
+        
+        // Set up game orchestrator
+        MainGameController orchestrator = new MainGameController();
+        PhomLogicController logicController = (PhomLogicController) orchestrator.selectGame("Phom", players, 10);
+        
+        // Create view controller
+        PhomViewController viewController = new PhomGameViewController();
+        
+        // Connect logic and view controllers
+        logicController.setViewController(viewController);
+        viewController.setLogicController(logicController);
+        
+        // Start the game
+        logicController.startGame();
+        
+        // Simulate some player actions
+        System.out.println("\n--- Simulating Player Actions ---\n");
+        
+        // Human player draws a card
+        logicController.playerRequestsDraw(players.get(0));
+        
+        // Human player discards a card (assuming they have cards)
+        if (!players.get(0).getHand().isEmpty()) {
+            logicController.playerRequestsDiscard(players.get(0), players.get(0).getHand().get(0));
+        }
+        
+        // End the game
+        System.out.println("\n--- Ending Game ---\n");
+        logicController.endGame();
+    }
+    
+    /**
+     * Set up and play a TienLen game
+     */
+    private static void playTienLenGame() {
+        System.out.println("\n=== Starting TienLen Game ===\n");
+        
+        // Create players
+        List<TienLenPlayer> players = new ArrayList<>();
+        players.add(new TienLenBotPlayer("Human Player")); // Using TienLenBotPlayer as a stand-in for human
+        players.add(new TienLenBotPlayer("Bot 1"));
+        players.add(new TienLenBotPlayer("Bot 2"));
+        players.add(new TienLenBotPlayer("Bot 3"));
+        
+        // Set up game orchestrator
+        MainGameController orchestrator = new MainGameController();
+        TienLenLogicController logicController = (TienLenLogicController) orchestrator.selectGame("TienLen", players, 13);
+        
+        // The TienLenViewController would be implemented similar to PhomViewController
+        // For this demo, we'll skip the view connection
+        
+        // Start the game
+        logicController.startGame();
+        
+        // Simulate some player actions
+        System.out.println("\n--- Simulating Player Actions ---\n");
+        
+        // Human player plays a card (assuming they have cards)
+        if (!players.get(0).getHand().isEmpty()) {
+            List<WestCard> cardsToPlay = new ArrayList<>();
+            cardsToPlay.add(players.get(0).getHand().get(0));
+            logicController.playerRequestsPlayCards(players.get(0), cardsToPlay);
+        }
+        
+        // Human player passes
+        logicController.playerRequestsPass(players.get(0));
+        
+        // End the game
+        System.out.println("\n--- Ending Game ---\n");
+        logicController.endGame();
     }
 }
