@@ -44,9 +44,6 @@ public abstract class Game<T extends Card, P extends Player<T>> {
     }
 
 
-    public abstract void playBotTurn();
-
-    public abstract void playHumanTurn();
 
     public void setCurrentPlayer(P currentPlayer) {
         this.currentPlayer = currentPlayer;

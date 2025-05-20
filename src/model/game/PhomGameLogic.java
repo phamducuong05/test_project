@@ -54,105 +54,7 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
     public PhomPlayer getFirstPlayer(List<PhomPlayer> players) {
         return players.getFirst();
     }
-
-    // bổ sung ù ở playturn
-    @Override
-    public void playBotTurn() {
-        System.out.print("Current: " + getCurrentPlayer().getName() + " | ");
-        if(currentPlayer instanceof PhomBotPlayer){
-            if(cardsOnTable == null){
-                cardsOnTable = ((PhomBotPlayer) currentPlayer).autoPlay();
-                PhomPlayer nextPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) + 1) % getPlayers().size());
-                nextPlayer.addDiscardCards(cardsOnTable);
-                System.out.print("Play: " + cardsOnTable + " | Cards left: " + currentPlayer.handSize());
-                if(!endGame())
-                    nextTurn();
-
-            }
-            else if(!canFormPhom(currentPlayer, cardsOnTable)){
-                System.out.print("Cannot eat, draw 1 card");
-                if(!deck.isEmpty())
-                  currentPlayer.receiveCard(deck.drawCard());
-                else
-                  System.out.print("Out of cards");
-                cardsOnTable = ((PhomBotPlayer) currentPlayer).autoPlay();
-                PhomPlayer nextPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) + 1) % getPlayers().size());
-                nextPlayer.addDiscardCards(cardsOnTable);
-                System.out.print("Play: " + cardsOnTable + " | Cards left: " + currentPlayer.handSize());
-                if(!endGame())
-                    nextTurn();
-
-            }
-            else{
-                cardsOnTable = ((PhomBotPlayer) currentPlayer).autoPlay();
-                System.out.print("Play: " + cardsOnTable + " | Cards left: " + currentPlayer.handSize());
-                PhomPlayer nextPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) + 1) % getPlayers().size());
-                nextPlayer.addDiscardCards(cardsOnTable);
-                // Chuyển bài đã đánh ở dưới bàn và sang lượt tiếp theo
-                if(!endGame())
-                    nextTurn();
-
-            }
-
-        }
-        else{
-            return ;
-        }
-
-        return;
-    }
-
-    public void playBotTurn() {
-        System.out.print("Current: " + getCurrentPlayer().getName() + " | ");
-        if(currentPlayer instanceof PhomBotPlayer){
-            if(cardsOnTable == null){
-                cardsOnTable = ((PhomBotPlayer) currentPlayer).autoPlay();
-                PhomPlayer nextPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) + 1) % getPlayers().size());
-                nextPlayer.addDiscardCards(cardsOnTable);
-                System.out.print("Play: " + cardsOnTable + " | Cards left: " + currentPlayer.handSize());
-                if(!endGame())
-                    nextTurn();
-
-            }
-            else if(!canFormPhom(currentPlayer, cardsOnTable)){
-                System.out.print("Cannot eat, draw 1 card");
-                if(!deck.isEmpty())
-                    currentPlayer.receiveCard(deck.drawCard());
-                else
-                    System.out.print("Out of cards");
-                cardsOnTable = ((PhomBotPlayer) currentPlayer).autoPlay();
-                PhomPlayer nextPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) + 1) % getPlayers().size());
-                nextPlayer.addDiscardCards(cardsOnTable);
-                System.out.print("Play: " + cardsOnTable + " | Cards left: " + currentPlayer.handSize());
-                if(!endGame())
-                    nextTurn();
-
-            }
-            else{
-                cardsOnTable = ((PhomBotPlayer) currentPlayer).autoPlay();
-                System.out.print("Play: " + cardsOnTable + " | Cards left: " + currentPlayer.handSize());
-                PhomPlayer nextPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) + 1) % getPlayers().size());
-                nextPlayer.addDiscardCards(cardsOnTable);
-                // Chuyển bài đã đánh ở dưới bàn và sang lượt tiếp theo
-                if(!endGame())
-                    nextTurn();
-
-            }
-
-        }
-        else{
-            if(canFormPhom(currentPlayer, cardsOnTable)) {
-                // UI
-            }
-            else {
-                // UI
-            }
-            // UI prompt play card
-        }
-
-        return;
-    }
-
+    
     public void botDiscardCard() {
         PhomBotPlayer botPlayer = (PhomBotPlayer) currentPlayer;
         botPlayer.getHand().remove(botPlayer.decideDiscard());
@@ -202,7 +104,6 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
         } else {
             return;
         }
-        return;
     }
 
     public void sendCardToMeld(PhomPlayer sender, PhomPlayer recipient, WestCard cardToSend, List<WestCard> meldToSendTo) {
@@ -218,7 +119,7 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
         cardsOnTable = card;
     }
 
-    public void humanDrawCard() {
+    public void playerDrawCard() {
         if(!deck.isEmpty()) {
             WestCard card = deck.drawCard();
             currentPlayer.receiveCard(card);
@@ -343,7 +244,8 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
                 currentPlayers,
                 activePlayer,
                 currentMeldedCards,
-                deck.size()
+                endGame(),
+                winnerPlayer
         );
     }
 

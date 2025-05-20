@@ -144,7 +144,6 @@ public class PhomGameViewController implements PhomViewController {
             PhomPlayer currentPlayer = logicController.getCurrentPlayer();
             logicController.playerRequestsDiscard(currentPlayer, selectedCards);
             selectedCards.clear();
-            System.out.println("Player " + currentPlayer.getName() + " discards card: " );
         } else {
             System.out.println("No card selected to discard");
         }
