@@ -17,7 +17,6 @@ import java.util.List;
 
 public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
     private List<WestCard> cardsOnTable;
-    private int countSkip = 0;
 
     public TienLenMienBacGameLogic() {
     }
@@ -204,6 +203,7 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
                 currentPlayers,
                 activePlayer,
                 cardsOnTable,
+                endGame()
         );
     }
 
