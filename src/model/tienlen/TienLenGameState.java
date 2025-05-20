@@ -11,34 +11,27 @@ import java.util.HashMap;
 public class TienLenGameState {
     private final List<TienLenPlayer> players;
     private final TienLenPlayer currentPlayer;
-    private final List<WestCard> lastPlayedCards;
-    private final TienLenPlayer lastPlayer;
-    private final Map<TienLenPlayer, Integer> playerScores;
+    private final List<WestCard> cardsOnTable;
     private final boolean isGameOver;
-    private final TienLenPlayer winner;
-    
+    private final List<TienLenPlayer> playerRankings;
+
     /**
      * Constructor for TienLenGameState
-     * 
+     *
      * @param players The list of players
      * @param currentPlayer The current player
-     * @param lastPlayedCards The last played cards
-     * @param lastPlayer The player who played the last cards
-     * @param playerScores The scores of each player
+     * @param cardsOnTable The cards on the table
      * @param isGameOver Whether the game is over
-     * @param winner The winner of the game (null if game is not over)
+     * @param playerRankings The player rankings
+     *
      */
-    public TienLenGameState(List<TienLenPlayer> players, TienLenPlayer currentPlayer, 
-                          List<WestCard> lastPlayedCards, TienLenPlayer lastPlayer, 
-                          Map<TienLenPlayer, Integer> playerScores,
-                          boolean isGameOver, TienLenPlayer winner) {
+    public TienLenGameState(List<TienLenPlayer> players, TienLenPlayer currentPlayer,
+                            List<WestCard> cardsOnTable, boolean isGameOver, List<TienLenPlayer> playerRankings) {
         this.players = players;
         this.currentPlayer = currentPlayer;
-        this.lastPlayedCards = lastPlayedCards;
-        this.lastPlayer = lastPlayer;
-        this.playerScores = playerScores != null ? playerScores : new HashMap<>();
+        this.cardsOnTable = cardsOnTable;
         this.isGameOver = isGameOver;
-        this.winner = winner;
+        this.playerRankings = playerRankings;
     }
     
     /**
@@ -58,59 +51,21 @@ public class TienLenGameState {
     public TienLenPlayer getCurrentPlayer() {
         return currentPlayer;
     }
-    
-    /**
-     * Get the last played cards
-     * 
-     * @return The last played cards
-     */
-    public List<WestCard> getLastPlayedCards() {
-        return lastPlayedCards;
-    }
-    
-    /**
-     * Get the player who played the last cards
-     * 
-     * @return The player who played the last cards
-     */
-    public TienLenPlayer getLastPlayer() {
-        return lastPlayer;
-    }
-    
-    /**
-     * Get the scores of each player
-     * 
-     * @return A map from players to their scores
-     */
-    public Map<TienLenPlayer, Integer> getPlayerScores() {
-        return playerScores;
-    }
-    
-    /**
-     * Get the score of a specific player
-     * 
-     * @param player The player
-     * @return The player's score, or 0 if not found
-     */
-    public int getPlayerScore(TienLenPlayer player) {
-        return playerScores.getOrDefault(player, 0);
-    }
-    
     /**
      * Check if the game is over
-     * 
+     *
      * @return true if the game is over, false otherwise
      */
     public boolean isGameOver() {
         return isGameOver;
     }
-    
     /**
-     * Get the winner of the game
-     * 
-     * @return The winner, or null if game is not over
+     * Get the list of cards on the table
+     *
+     * @return The list of cards on the table
      */
-    public TienLenPlayer getWinner() {
-        return winner;
+    public List<WestCard> getCardsOnTable() {
+        return cardsOnTable;
     }
+
 }

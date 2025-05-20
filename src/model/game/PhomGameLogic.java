@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Map;
 
 public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
+    private PhomGameState currentGameState;
     private WestCard cardsOnTable;
     private PhomPlayer winnerPlayer;
     private List<List<WestCard>> MeldedCards; // Phom đã hạ
