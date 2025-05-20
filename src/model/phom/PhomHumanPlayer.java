@@ -20,12 +20,6 @@ public class PhomHumanPlayer extends PhomPlayer{
         throw new UnsupportedOperationException("Human decision handled by Controller via UI.");
     }
 
-
-    @Override
-    public List<List<WestCard>> decideMelds(PhomGameState gameState) {
-        throw new UnsupportedOperationException("Human decision handled by Controller via UI.");
-    }
-
     @Override
     public Map<WestCard, List<WestCard>> decideSends(PhomGameState gameState) {
         throw new UnsupportedOperationException("Human decision handled by Controller via UI.");
