@@ -20,7 +20,6 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
     private int countSkip = 0;
 
     public TienLenMienBacGameLogic() {
-        cardsOnTable = new ArrayList<>();
     }
 
     public TienLenMienBacGameLogic(Deck<WestCard, TienLenPlayer> deck, List<TienLenPlayer> players, int numberOfCards) {
@@ -28,35 +27,28 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
         cardsOnTable = new ArrayList<>();
     }
 
-    @Override
-    public void playTurn() {
-        System.out.print("Current: " + getCurrentPlayer().getName() + " | ");
-        if(currentPlayer instanceof TienLenBotPlayer){
-            List<WestCard> cardsPlayed = ((TienLenBotPlayer) currentPlayer).autoPlay(cardsOnTable);
-            if(cardsPlayed.isEmpty()){
-                System.out.print("Skip" + " | Cards left: " + currentPlayer.handSize());
-                countSkip++;
-            }
-            else{
-                System.out.print("Play: " + cardsPlayed + " | Cards left: " + currentPlayer.handSize());
-                cardsOnTable = new ArrayList<>(cardsPlayed);
-                countSkip = 0;
-            }
-            System.out.println(" | Card on table: " + cardsOnTable);
-        }
-        else{
-            System.out.println("Further development here....");
-        }
-        nextTurn();
-    }
+//    @Override
+//    public void playTurn() {
+//        System.out.print("Current: " + getCurrentPlayer().getName() + " | ");
+//        if(currentPlayer instanceof TienLenBotPlayer){
+//            List<WestCard> cardsPlayed = ((TienLenBotPlayer) currentPlayer).autoPlay(cardsOnTable);
+//            if(cardsPlayed.isEmpty()){
+//                System.out.print("Skip" + " | Cards left: " + currentPlayer.handSize());
+//                countSkip++;
+//            }
+//            else{
+//                System.out.print("Play: " + cardsPlayed + " | Cards left: " + currentPlayer.handSize());
+//                cardsOnTable = new ArrayList<>(cardsPlayed);
+//                countSkip = 0;
+//            }
+//            System.out.println(" | Card on table: " + cardsOnTable);
+//        }
+//        else{
+//            System.out.println("Further development here....");
+//        }
+//        nextTurn();
+//    }
 
-    public void resetTurn(){
-        if (countSkip == 3){
-            cardsOnTable = new ArrayList<>();
-            countSkip = 0;
-            System.out.println("Reset Turn");
-        }
-    }
 
     @Override
     public TienLenPlayer getFirstPlayer(List<TienLenPlayer> players) {
@@ -71,11 +63,8 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
     }
 
     @Override
-    public boolean isValidMove(TienLenPlayer player) {
-        List<WestCard> selectedCards = player.getSelectedCards();
-        if (selectedCards.isEmpty()) {
-            return false;
-        }
+    public boolean isValidMove(List<WestCard> selectedCards) {
+        if (!isValidCombination(selectedCards)) return false;
         return isCounter(cardsOnTable, selectedCards);
     }
 
@@ -93,10 +82,10 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
         currentPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) + 1) % getPlayers().size());
     }
 
-    public void playCards(List<WestCard> cards) {
-        if (isValidCombination(cards)) {
-            cardsOnTable = currentPlayer.playCard();
-            System.out.println(currentPlayer.getName() + " played: " + formatCards(cards));
+    public void playCards(List<WestCard> selectedCards) {
+        if (isValidMove(selectedCards)) {
+            currentPlayer.getHand().removeAll(selectedCards);
+            cardsOnTable = selectedCards;
         } else {
             System.out.println("Invalid card combination!");
         }
@@ -111,17 +100,6 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
         return !selectedCards.isEmpty();
     }
 
-    private String formatCards(List<WestCard> cards) {
-        StringBuilder sb = new StringBuilder();
-        for (WestCard card : cards) {
-            sb.append(card.toString()).append(" ");
-        }
-        return sb.toString().trim();
-    }
-
-    public List<WestCard> getCardsOnTable() {
-        return cardsOnTable;
-    }
 
     public boolean isSameSuit(WestCard c1, WestCard c2) {
         return c1.getSuit() == c2.getSuit();
@@ -226,7 +204,6 @@ public class TienLenMienBacGameLogic extends Game<WestCard, TienLenPlayer> {
                 currentPlayers,
                 activePlayer,
                 cardsOnTable,
-
         );
     }
 
