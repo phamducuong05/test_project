@@ -5,6 +5,7 @@ import model.game.TienLenMienBacGameLogic;
 import model.tienlen.TienLenGameState;
 import model.tienlen.TienLenPlayer;
 import model.tienlen.TienLenBotPlayer;
+import view.TienLenGameViewController;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public class TienLenLogicController extends LogicController<WestCard, TienLenPlayer, TienLenMienBacGameLogic> {
     
     // Reference to the view controller (without JavaFX dependencies)
-    private TienLenViewController viewController;
+    private TienLenGameViewController viewController;
     
     public TienLenLogicController(TienLenMienBacGameLogic gameLogic) {
         super(gameLogic);
@@ -26,7 +27,7 @@ public class TienLenLogicController extends LogicController<WestCard, TienLenPla
      * 
      * @param viewController The view controller to use
      */
-    public void setViewController(TienLenViewController viewController) {
+    public void setViewController(TienLenGameViewController viewController) {
         this.viewController = viewController;
     }
     
@@ -41,8 +42,17 @@ public class TienLenLogicController extends LogicController<WestCard, TienLenPla
             @SuppressWarnings("unchecked")
             List<WestCard> cardsToPlay = (List<WestCard>) move;
             
-            // Validate the move
-            if (isValidCardPlay(player, cardsToPlay)) {
+            // Ensure player owns all cards
+            if (!player.getHand().containsAll(cardsToPlay)) {
+                if (viewController != null) {
+                    viewController.showInvalidMoveMessage();
+                    viewController.promptPlayerForAction(player, gameLogic.getCurrentGameState());
+                }
+                return;
+            }
+            
+            // Validate the move using game logic
+            if (gameLogic.isValidMove(cardsToPlay)) {
                 // Update player's hand
                 player.getHand().removeAll(cardsToPlay);
                 
@@ -56,7 +66,7 @@ public class TienLenLogicController extends LogicController<WestCard, TienLenPla
                 if (player.getHand().isEmpty()) {
                     endGame();
                 } else {
-                    // If valid move, player can play again if they want
+                    // If invalid move, player can play again if they want
                     if (viewController != null) {
                         viewController.promptPlayerForAction(player, gameLogic.getCurrentGameState());
                     }
@@ -72,60 +82,6 @@ public class TienLenLogicController extends LogicController<WestCard, TienLenPla
             // Player passes turn
             nextTurn();
         }
-    }
-    
-    /**
-     * Validate if a card play is valid according to TienLen rules
-     * 
-     * @param player The player making the move
-     * @param cards The cards being played
-     * @return true if the move is valid, false otherwise
-     */
-    private boolean isValidCardPlay(TienLenPlayer player, List<WestCard> cards) {
-        // Ensure player owns all cards
-        if (!player.getHand().containsAll(cards)) {
-            return false;
-        }
-        
-        TienLenGameState gameState = gameLogic.getCurrentGameState();
-        
-        // First play in a round is always valid
-        List<WestCard> lastPlayed = gameState.getLastPlayedCards();
-        if (lastPlayed == null || lastPlayed.isEmpty()) {
-            return true;
-        }
-        
-        // In subsequent plays, check if current play beats the previous play
-        // This is a simplified implementation of TienLen rules
-        // Would need to be expanded based on detailed game rules
-        
-        // Check if same number of cards
-        if (cards.size() != lastPlayed.size()) {
-            return false;
-        }
-        
-        // In real implementation, would check card combinations and values here
-        // For now, just a basic check that the highest card beats the previous highest card
-        WestCard highestNew = findHighestCard(cards);
-        WestCard highestLast = findHighestCard(lastPlayed);
-        
-        return highestNew.getRank().ordinal() > highestLast.getRank().ordinal();
-    }
-    
-    /**
-     * Find the highest card in a list of cards
-     * 
-     * @param cards The list of cards
-     * @return The highest card
-     */
-    private WestCard findHighestCard(List<WestCard> cards) {
-        WestCard highest = cards.get(0);
-        for (WestCard card : cards) {
-            if (card.getRank().ordinal() > highest.getRank().ordinal()) {
-                highest = card;
-            }
-        }
-        return highest;
     }
     
     @Override
@@ -207,6 +163,12 @@ public class TienLenLogicController extends LogicController<WestCard, TienLenPla
         if (viewController != null) {
             viewController.onGameEnded(gameLogic.getCurrentGameState(), winner);
         }
+    }
+
+    public void handleDeal() {
+        gameLogic.startGame();
+        viewController.updatePlayerHands(gameLogic.getCurrentGameState());
+        viewController.promptPlayerForAction(gameLogic.getCurrentGameState().getCurrentPlayer(), gameLogic.getCurrentGameState());
     }
     
     /**
