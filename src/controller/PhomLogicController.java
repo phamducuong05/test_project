@@ -81,6 +81,8 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
             // Move to next turn after discard
             nextTurn();
             
+        } else if(move instanceof PhomPlayerAction.SendCardsAction) {
+
         }
     }
 
@@ -137,10 +139,12 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
             else {
                 // Bot draws a card
                 gameLogic.playerDrawCard();
+                viewController.updatePlayerHands(gameLogic.getCurrentGameState());
             }
             gameLogic.botDiscardCard();
             viewController.updatePlayerHands(gameState);
             // viewController.updateDiscardPile
+            nextTurn();
 
         } else {
             // Human player's turn - prompt for action via the view controller
@@ -170,37 +174,7 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
         }
     }
     
-    @Override
-    protected void onGameStart() {
-        if (viewController != null) {
-            viewController.onGameStarted(gameLogic.getCurrentGameState());
-        }
-        checkAndPlayBotTurnIfNeeded();
-    }
-    
-    @Override
-    protected void onGamePause() {
-        if (viewController != null) {
-            viewController.onGamePaused();
-        }
-    }
-    
-    @Override
-    protected void onGameResume() {
-        if (viewController != null) {
-            viewController.onGameResumed();
-        }
-    }
-    
-    @Override
-    protected void onGameEnd() {
-        // Determine winner and final scores
-        PhomPlayer winner = findWinner();
-        
-        if (viewController != null) {
-            viewController.onGameEnded(gameLogic.getCurrentGameState(), winner);
-        }
-    }
+
     
     /**
      * Find the winner of the game based on current game state

@@ -18,40 +18,7 @@ public abstract class LogicController<T extends Card, P extends Player<T>, G ext
         this.gameLogic = gameLogic;
         this.isGameRunning = false;
     }
-    
-    /**
-     * Start the game
-     */
-    public void startGame() {
-        gameLogic.startGame();
-        isGameRunning = true;
-        onGameStart();
-    }
-    
-    /**
-     * Pause the game
-     */
-    public void pauseGame() {
-        isGameRunning = false;
-        onGamePause();
-    }
-    
-    /**
-     * Resume the game
-     */
-    public void resumeGame() {
-        isGameRunning = true;
-        onGameResume();
-    }
-    
-    /**
-     * End the game
-     */
-    public void endGame() {
-        isGameRunning = false;
-        gameLogic.endGame();
-        onGameEnd();
-    }
+
     
     /**
      * Process a player's move
@@ -79,23 +46,7 @@ public abstract class LogicController<T extends Card, P extends Player<T>, G ext
     /**
      * Called when the game starts
      */
-    protected abstract void onGameStart();
-    
-    /**
-     * Called when the game pauses
-     */
-    protected abstract void onGamePause();
-    
-    /**
-     * Called when the game resumes
-     */
-    protected abstract void onGameResume();
-    
-    /**
-     * Called when the game ends
-     */
-    protected abstract void onGameEnd();
-    
+
     /**
      * Get the current player
      * 
