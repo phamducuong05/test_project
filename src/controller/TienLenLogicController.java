@@ -60,11 +60,11 @@ public class TienLenLogicController extends LogicController<WestCard, TienLenPla
                 gameLogic.playCards(cardsToPlay);
                 
                 // Update view
-                updateGameState();
+
                 
                 // Check if player has won (no cards left)
                 if (player.getHand().isEmpty()) {
-                    endGame();
+                    //endGame();
                 } else {
                     // If invalid move, player can play again if they want
                     if (viewController != null) {
@@ -87,7 +87,7 @@ public class TienLenLogicController extends LogicController<WestCard, TienLenPla
     @Override
     protected void nextTurn() {
         gameLogic.nextTurn();
-        updateGameState();
+        //view.updatehand
         checkAndPlayBotTurnIfNeeded();
     }
     
@@ -118,52 +118,9 @@ public class TienLenLogicController extends LogicController<WestCard, TienLenPla
         }
     }
     
-    @Override
-    protected void updateGameState() {
-        TienLenGameState gameState = gameLogic.getCurrentGameState();
-        
-        // Notify view of game state change
-        if (viewController != null) {
-            viewController.updateView(gameState);
-        }
-        
-        // Check if game is over
-        if (gameLogic.isGameOver()) {
-            endGame();
-        }
-    }
+
     
-    @Override
-    protected void onGameStart() {
-        if (viewController != null) {
-            viewController.onGameStarted(gameLogic.getCurrentGameState());
-        }
-        checkAndPlayBotTurnIfNeeded();
-    }
-    
-    @Override
-    protected void onGamePause() {
-        if (viewController != null) {
-            viewController.onGamePaused();
-        }
-    }
-    
-    @Override
-    protected void onGameResume() {
-        if (viewController != null) {
-            viewController.onGameResumed();
-        }
-    }
-    
-    @Override
-    protected void onGameEnd() {
-        // Determine winner and final scores
-        TienLenPlayer winner = findWinner();
-        
-        if (viewController != null) {
-            viewController.onGameEnded(gameLogic.getCurrentGameState(), winner);
-        }
-    }
+
 
     public void handleDeal() {
         gameLogic.startGame();

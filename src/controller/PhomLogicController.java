@@ -158,22 +158,7 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
             }
         }
     }
-    
-    @Override
-    protected void updateGameState() {
-        PhomGameState gameState = gameLogic.getCurrentGameState();
-        
-        // Notify view of game state change
-        if (viewController != null) {
-            viewController.updateView(gameState);
-        }
-        
-        // Check if game is over
-        if (gameLogic.isGameOver()) {
-            endGame();
-        }
-    }
-    
+
 
     
     /**
