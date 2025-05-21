@@ -116,17 +116,12 @@ public class PhomGameViewController implements PhomViewController {
         }
     }
     
-    
-    
-    /**
-     * Handle eat button click
-     */
+
     public void handleEatButtonClick() {
         if (logicController != null) {
             PhomPlayer currentPlayer = logicController.getCurrentPlayer();
             PhomGameState gameState = logicController.getGameLogic().getCurrentGameState();
             WestCard topCard = gameState.getCardOnTable();
-            
             if (topCard != null) {
                 logicController.playerRequestsEat(currentPlayer, topCard);
             } else {
@@ -143,6 +138,10 @@ public class PhomGameViewController implements PhomViewController {
         } else {
             System.out.println("No card selected to discard");
         }
+    }
+
+    public void handleSendCardClick() {
+
     }
 
 

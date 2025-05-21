@@ -43,8 +43,7 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
             // Player draws a card from the deck
             gameLogic.playerDrawCard();
             viewController.updatePlayerHands(gameLogic.getCurrentGameState());
-            
-            // After drawing, player must discard a card
+
             if (viewController != null) {
                 viewController.promptPlayerToDiscard(player, gameLogic.getCurrentGameState());
             }
@@ -55,7 +54,7 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
             WestCard cardToEat = eatAction.getCard();
             
             // Implement eat card logic here
-            gameLogic.humanEatCard();
+            gameLogic.playerEatCard(cardToEat);
             
             // Use the game's state to remove the card from the table
             PhomGameState gameState = gameLogic.getCurrentGameState();
@@ -94,19 +93,16 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
     
     @Override
     protected void nextTurn() {
-        // Check xem người đánh lượt vừa rồi có đủ 4 quân ở trên chồng bài đánh chưa
-        // Nếu đủ rồi thì cho hạ phỏm
-        if(gameLogic.getCurrentPlayer().getNumOfTurn() == 4) {
-            gameLogic.playerMeldCard();
-            // viewUpdateMeldCards
+        if(!gameLogic.endGame()) {
+            if (gameLogic.getCurrentPlayer().getNumOfTurn() == 4) {
+                gameLogic.playerMeldCard();
+                // viewUpdateMeldCards
+                viewController.updatePlayerHands(gameLogic.getCurrentGameState());
+            }
+            gameLogic.nextTurn();
             viewController.updatePlayerHands(gameLogic.getCurrentGameState());
+            checkAndPlayBotTurnIfNeeded();
         }
-        gameLogic.nextTurn();
-        viewController.updatePlayerHands(gameLogic.getCurrentGameState());
-        // viewController.updateMeldCards
-
-        // viewController update hands and view controller update discard pile
-        checkAndPlayBotTurnIfNeeded();
     }
     
     @Override
@@ -130,13 +126,11 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
             PhomBotPlayer bot = (PhomBotPlayer) currentPlayer;
             PhomGameState gameState = gameLogic.getCurrentGameState();
 
-
-            
             // First check if bot can/wants to eat the top card on table
             WestCard topCard = gameLogic.getCardsOnTable();
             if (topCard != null && bot.decideToEat(topCard)) {
                 // Bot decides to eat card
-                gameLogic.botEatCard();
+                gameLogic.playerEatCard(topCard);
                 viewController.updatePlayerHands(gameState);
                 // viewController.updateDiscardPile
             }
@@ -260,7 +254,22 @@ public class PhomLogicController extends LogicController<WestCard, PhomPlayer, P
         else {
             System.out.println("Error"); // Ở đây UI/UX sẽ thông báo lỗi ra màn hình
         }
+    }
 
+    public void playerRequestsSendCards(PhomPlayer player, WestCard cardToSend, List<WestCard> targetPhom, PhomPlayer targetPlayer) {
+        // Kiểm tra xem có phải là pha gửi bài không
+        if (gameLogic.isSendingPhase()) {
+            // Tạo một hành động gửi bài
+            PhomPlayerAction.SendCardsAction sendAction = new PhomPlayerAction.SendCardsAction(cardToSend, targetPhom, targetPlayer);
+            // Xử lý hành động gửi bài
+            processPlayerMove(player, sendAction);
+        } else {
+            System.out.println("Error: Not in sending phase."); // Hoặc thông báo lỗi ra UI
+            // Thông báo cho người chơi rằng không thể gửi bài lúc này
+            if (viewController != null) {
+                System.out.println("Hiện tại không phải giai đoạn gửi bài.");
+            }
+        }
     }
 
 } 

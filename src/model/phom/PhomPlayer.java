@@ -122,12 +122,17 @@ public abstract class PhomPlayer extends Player<WestCard> {
 
     public int calculateScore() {
         int score = 0;
+
+        List<WestCard> remainingCards = new ArrayList<>(this.getHand());
+
         for (List<WestCard> phom : findCombinations()) {
-            this.getHand().removeAll(phom);
+            remainingCards.removeAll(phom);
         }
-        for (WestCard card : this.getHand()) {
+
+        for (WestCard card : remainingCards) {
             score += card.getRank().getValue();
         }
+
         return score;
     }
 

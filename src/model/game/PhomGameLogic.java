@@ -18,7 +18,7 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
     private WestCard cardsOnTable;
     private PhomPlayer winnerPlayer;
     private List<List<WestCard>> MeldedCards; // Phom đã hạ
-    private boolean isFinalMeldingPhase; // Cờ báo hiệu đang trong giai đoạn hạ bài cuối
+
 
 
     public PhomGameLogic() {
@@ -27,7 +27,7 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
     public PhomGameLogic(Deck<WestCard, PhomPlayer> deck, List<PhomPlayer> players, int numberOfCards) {
         super(deck, players, numberOfCards);
         cardsOnTable = null;
-        this.isFinalMeldingPhase = false; // Khởi tạo cờ
+
     }
 
     @Override
@@ -64,12 +64,6 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
         cardsOnTable = botPlayer.decideDiscard();
     }
 
-
-    public void botEatCard() {
-        currentPlayer.getEatenCards().add(cardsOnTable);
-        PhomPlayer previousPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) - 1) % getPlayers().size());
-        previousPlayer.getDiscardCards().remove(cardsOnTable);
-    }
 
     public void botSendCard() {
         PhomBotPlayer botPlayer = (PhomBotPlayer) currentPlayer;
@@ -124,11 +118,13 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
     }
 
 
-    public void humanEatCard() {
-        currentPlayer.getEatenCards().add(cardsOnTable);
+    public void playerEatCard(WestCard cardToEat) {
+        currentPlayer.getEatenCards().add(cardToEat);
         PhomPlayer previousPlayer = getPlayers().get((getPlayers().indexOf(currentPlayer) - 1) % getPlayers().size());
-        previousPlayer.getDiscardCards().remove(cardsOnTable);
+        previousPlayer.getDiscardCards().remove(cardToEat);
     }
+
+
 
     @Override
     public boolean isValidMove(List<WestCard> cards) {
@@ -250,5 +246,8 @@ public class PhomGameLogic extends Game<WestCard, PhomPlayer> {
         return cardsOnTable;
     }
 
+    public boolean isSendingPhase() {
+        return !MeldedCards.isEmpty();
+    }
 
 }

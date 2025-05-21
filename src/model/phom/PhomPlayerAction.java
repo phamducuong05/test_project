@@ -45,4 +45,30 @@ public class PhomPlayerAction {
         }
     }
 
+    public static class SendCardsAction {
+        private final WestCard sentCard;
+        private final List<WestCard> targetPhom;
+        private final PhomPlayer targetPlayer;
+
+
+        public SendCardsAction(WestCard sentCard, List<WestCard> targetPhom, PhomPlayer targetPlayer) {
+            this.sentCard = sentCard;
+            this.targetPhom = targetPhom;
+            this.targetPlayer = targetPlayer;
+        }
+
+        public WestCard getSentCard() {
+            return sentCard;
+        }
+
+        public List<WestCard> getTargetPhom() {
+            return targetPhom;
+        }
+
+        public PhomPlayer getTargetPlayer() {
+            return targetPlayer;
+        }
+
+    }
+
 } 
