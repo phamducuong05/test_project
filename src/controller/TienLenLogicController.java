@@ -179,13 +179,7 @@ public class TienLenLogicController extends LogicController<WestCard, TienLenPla
     private TienLenPlayer findWinner() {
         TienLenGameState gameState = gameLogic.getCurrentGameState();
         
-        // If game state already has a winner, return it
-        if (gameState.getWinner() != null) {
-            return gameState.getWinner();
-        }
-        
-        // Otherwise, determine winner based on game rules
-        // In TienLen, the first player to get rid of all cards wins
+        // Check all players to find the one who has no cards left
         for (TienLenPlayer player : gameState.getPlayers()) {
             if (player.getHand().isEmpty()) {
                 return player;
